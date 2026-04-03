@@ -114,6 +114,10 @@ export default function HierarchyGrid({ data = [] }) {
                     const previousRow = rowIndex > 0 ? gridData[rowIndex - 1] : null;
                     const nextRow = rowIndex < gridData.length - 1 ? gridData[rowIndex + 1] : null;
                     
+                    // Check if row has a count node and find its position
+                    const countNodeIndex = row.findIndex(node => node?.isCountNode);
+                    const hasCountNode = countNodeIndex !== -1;
+                    
                     return row.map((node, colIndex) => {
                         const isLastInRow = colIndex === COLUMNS - 1;
                         const hasChildren = node && !node.isCountNode && node.children?.length > 0;
@@ -126,6 +130,9 @@ export default function HierarchyGrid({ data = [] }) {
                         
                         const isLastChildOfParent = node && isLastChild(node, colIndex, row, nextRow);
                         
+                        // Check if this empty cell comes after a count node in the same row
+                        const isAfterCountNode = hasCountNode && colIndex > countNodeIndex;
+                        
                         // Empty cell or duplicate parent
                         if (!node || isSameAsAbove) {
                             return (
@@ -133,7 +140,7 @@ export default function HierarchyGrid({ data = [] }) {
                                     key={`${rowIndex}-${colIndex}`} 
                                     className="grid-item"
                                 >
-                                    <div className="grid-box-wrapper"></div>
+                                    <div className={`grid-box-wrapper ${isAfterCountNode ? 'last-child' : ''}`}></div>
                                 </div>
                             );
                         }
