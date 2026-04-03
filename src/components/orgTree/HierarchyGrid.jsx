@@ -133,6 +133,14 @@ export default function HierarchyGrid({ data = [] }) {
                         // Check if this empty cell comes after a count node in the same row
                         const isAfterCountNode = hasCountNode && colIndex > countNodeIndex;
                         
+                        // Check if there are no more nodes below in this column
+                        const hasNodeBelowInColumn = gridData.slice(rowIndex + 1).some(futureRow => 
+                            futureRow[colIndex] && futureRow[colIndex].id !== row[colIndex]?.id
+                        );
+                        
+                        // Check if this is the last actual node in the column
+                        const isLastNodeInColumn = node && !hasNodeBelowInColumn;
+                        
                         // Empty cell or duplicate parent
                         if (!node || isSameAsAbove) {
                             return (
@@ -140,7 +148,7 @@ export default function HierarchyGrid({ data = [] }) {
                                     key={`${rowIndex}-${colIndex}`} 
                                     className="grid-item"
                                 >
-                                    <div className={`grid-box-wrapper ${isAfterCountNode ? 'last-child' : ''}`}></div>
+                                    <div className={`grid-box-wrapper ${isAfterCountNode || !hasNodeBelowInColumn ? 'last-child' : ''}`}></div>
                                 </div>
                             );
                         }
@@ -150,7 +158,7 @@ export default function HierarchyGrid({ data = [] }) {
                                 key={`${rowIndex}-${colIndex}`} 
                                 className="grid-item"
                             >
-                                <div className={`grid-box-wrapper ${isLastChildOfParent || node.isCountNode ? 'last-child' : ''}`}>
+                                <div className={`grid-box-wrapper ${isLastChildOfParent || node.isCountNode || isLastNodeInColumn ? 'last-child' : ''}`}>
                                     <div 
                                         className={`grid-box ${node.isCountNode ? 'count-node' : ''}`}
                                         tabIndex={node.isCountNode ? 0 : undefined}
