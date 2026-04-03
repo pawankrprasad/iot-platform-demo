@@ -1,25 +1,20 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import "./styles.css";
 
 export default function HierarchyGrid({ data = [] }) {
     const COLUMNS = 5;
-    
     const headers = ["Customer", "Country", "City", "Location", "Status"];
     const [expandedNodes, setExpandedNodes] = useState({});
 
-    // Build hierarchical structure and create paths
-    const gridData = useMemo(() => {
-        if (!data.length) return [];
-        
-        // Create a map for quick lookup
+    // Build tree structure from flat data
+    const buildTree = useCallback((flatData) => {
         const nodeMap = new Map();
-        data.forEach(item => {
+        flatData.forEach(item => {
             nodeMap.set(item.id, { ...item, children: [] });
         });
         
-        // Build tree structure
         const roots = [];
-        data.forEach(item => {
+        flatData.forEach(item => {
             const node = nodeMap.get(item.id);
             if (!item.parentId) {
                 roots.push(node);
@@ -31,20 +26,20 @@ export default function HierarchyGrid({ data = [] }) {
             }
         });
         
-        // Generate all paths from root to leaf (or to any node)
+        return roots;
+    }, []);
+
+    // Generate paths from tree
+    const generatePaths = useCallback((roots, expandedNodes) => {
         const paths = [];
         
-        function generatePaths(node, currentPath = []) {
+        function traverse(node, currentPath = []) {
             const newPath = [...currentPath, node];
-            
-            // Check if this node is collapsed
             const isCollapsed = expandedNodes[node.id] === false;
             
             if (node.children.length === 0) {
-                // Leaf node - add this path
                 paths.push(newPath);
             } else if (isCollapsed) {
-                // Collapsed node - add path with count node
                 const countNode = {
                     id: `${node.id}-count`,
                     title: `count ${node.children.length}`,
@@ -54,18 +49,22 @@ export default function HierarchyGrid({ data = [] }) {
                 };
                 paths.push([...newPath, countNode]);
             } else {
-                // Has children and expanded - recurse into each child
-                node.children.forEach(child => {
-                    generatePaths(child, newPath);
-                });
+                node.children.forEach(child => traverse(child, newPath));
             }
         }
         
-        // Generate paths for all root nodes
-        roots.forEach(root => generatePaths(root));
+        roots.forEach(root => traverse(root));
+        return paths;
+    }, []);
+
+    // Convert paths to grid format
+    const gridData = useMemo(() => {
+        if (!data.length) return [];
         
-        // Convert paths to grid rows (pad to COLUMNS length)
-        const grid = paths.map(path => {
+        const roots = buildTree(data);
+        const paths = generatePaths(roots, expandedNodes);
+        
+        return paths.map(path => {
             const row = new Array(COLUMNS).fill(null);
             path.forEach((node, idx) => {
                 if (idx < COLUMNS) {
@@ -74,16 +73,32 @@ export default function HierarchyGrid({ data = [] }) {
             });
             return row;
         });
-        
-        return grid;
-    }, [data, expandedNodes]);
+    }, [data, expandedNodes, buildTree, generatePaths, COLUMNS]);
 
-    const toggleNode = (nodeId) => {
+    const toggleNode = useCallback((nodeId) => {
         setExpandedNodes(prev => ({
             ...prev,
             [nodeId]: prev[nodeId] === false ? true : false
         }));
-    };
+    }, []);
+
+    // Check if node should show last-child styling
+    const isLastChild = useCallback((node, colIndex, row, nextRow) => {
+        if (!node || colIndex === 0) return false;
+        
+        const parentCol = colIndex - 1;
+        if (!nextRow) return true;
+        
+        if (row[parentCol] && nextRow[parentCol]) {
+            return row[parentCol].id !== nextRow[parentCol].id;
+        }
+        
+        if (row[parentCol] && !nextRow[parentCol]) {
+            return true;
+        }
+        
+        return false;
+    }, []);
 
     return (
         <div className="grid-wrapper">
@@ -101,33 +116,15 @@ export default function HierarchyGrid({ data = [] }) {
                     
                     return row.map((node, colIndex) => {
                         const isLastInRow = colIndex === COLUMNS - 1;
-                        const hasChildren = node && !node.isCountNode && ((node.children && node.children.length > 0));
+                        const hasChildren = node && !node.isCountNode && node.children?.length > 0;
                         const isExpanded = node ? expandedNodes[node.id] !== false : false;
                         
-                        // Check if this node is the same as the previous row's node at the same position
                         const isSameAsAbove = previousRow && 
                                              node && 
                                              previousRow[colIndex] && 
                                              previousRow[colIndex].id === node.id;
                         
-                        // Check if this is the last child of its parent
-                        // It's the last child if:
-                        // 1. There's no next row (last row overall), OR
-                        // 2. The next row has a different parent at the previous column level
-                        let isLastChildOfParent = false;
-                        if (node && colIndex > 0) {
-                            const parentCol = colIndex - 1;
-                            if (!nextRow) {
-                                // Last row overall
-                                isLastChildOfParent = true;
-                            } else if (row[parentCol] && nextRow[parentCol]) {
-                                // Next row has different parent
-                                isLastChildOfParent = row[parentCol].id !== nextRow[parentCol].id;
-                            } else if (row[parentCol] && !nextRow[parentCol]) {
-                                // Next row doesn't have a parent at this level
-                                isLastChildOfParent = true;
-                            }
-                        }
+                        const isLastChildOfParent = node && isLastChild(node, colIndex, row, nextRow);
                         
                         // Empty cell or duplicate parent
                         if (!node || isSameAsAbove) {
@@ -149,7 +146,9 @@ export default function HierarchyGrid({ data = [] }) {
                                 <div className={`grid-box-wrapper ${isLastChildOfParent || node.isCountNode ? 'last-child' : ''}`}>
                                     <div 
                                         className={`grid-box ${node.isCountNode ? 'count-node' : ''}`}
-                                        onClick={node.isCountNode ? () => toggleNode(node.parentNodeId) : undefined}
+                                        tabIndex={node.isCountNode ? 0 : undefined}
+                                        role={node.isCountNode ? 'button' : undefined}
+                                        aria-label={node.isCountNode ? `Expand ${node.title.split(' ')[1]} children` : undefined}
                                         style={node.isCountNode ? { cursor: 'pointer' } : undefined}
                                     >
                                         {node.title}
@@ -158,6 +157,8 @@ export default function HierarchyGrid({ data = [] }) {
                                         <button 
                                             className="expand-btn"
                                             onClick={() => toggleNode(node.id)}
+                                            aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${node.title}`}
+                                            aria-expanded={isExpanded}
                                         >
                                             {isExpanded ? "−" : "+"}
                                         </button>

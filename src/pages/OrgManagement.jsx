@@ -1,12 +1,19 @@
 import HierarchyGrid from "../components/orgTree/HierarchyGrid";
 
-// Example: Customer -> Countries -> Cities -> Locations -> Status
-// Each row will show a complete path from Customer to Status
+/**
+ * Example hierarchical data structure demonstrating 5-level hierarchy:
+ * Customer → Countries → Cities → Locations → Status
+ * 
+ * Each object requires:
+ * - id: unique identifier
+ * - title: display text
+ * - parentId: id of parent node (null for root)
+ */
 const hierarchicalData = [
     // Root: Customer
     { id: 1, title: "Acme Corp", parentId: null },
     
-    // Level 1: Countries (children of Acme Corp)
+    // Level 1: Countries
     { id: 2, title: "USA", parentId: 1 },
     { id: 3, title: "Canada", parentId: 1 },
     { id: 4, title: "UK", parentId: 1 },
@@ -49,8 +56,19 @@ const hierarchicalData = [
 
 export function OrgManagement() {
     return (
-        <div>
-            <h1 style={{ padding: '20px', color: 'white' }}>Organization Hierarchy</h1>
+        <div style={{ 
+            minHeight: "100vh", 
+            background: "rgb(20, 27, 43)",
+            color: "white"
+        }}>
+            <h1 style={{ 
+                padding: "20px", 
+                margin: 0,
+                fontSize: "24px",
+                fontWeight: 600
+            }}>
+                Organization Hierarchy
+            </h1>
             <HierarchyGrid data={hierarchicalData} />
         </div>
     );
