@@ -1,4 +1,5 @@
 import HierarchyGrid from "../components/orgTree/HierarchyGrid";
+import { PageHeader } from '../components';
 
 /**
  * Generate large hierarchical data structure: Customer → Countries → Cities → Locations → Status
@@ -48,12 +49,13 @@ const generateHierarchicalData = () => {
         });
     });
     
-    // Status (2 per location)
+    // Serial Numbers (2 per location)
     const statuses = ["Active", "Maintenance"];
     
     locationIds.forEach((locationId, index) => {
         statuses.forEach(status => {
-            data.push({ id: currentId, title: status, parentId: locationId });
+            const randomNumber = Math.floor(100000 + Math.random() * 900000);
+            data.push({ id: currentId, title: `SN-${randomNumber}`, parentId: locationId });
             currentId++;
         });
     });
@@ -65,19 +67,12 @@ const hierarchicalData = generateHierarchicalData();
 
 export function OrgManagement() {
     return (
-        <div style={{ 
-            minHeight: "100vh", 
-            background: "rgb(20, 27, 43)",
-            color: "white"
-        }}>
-            <h1 style={{ 
-                padding: "20px", 
-                margin: 0,
-                fontSize: "24px",
-                fontWeight: 600
-            }}>
-                Organization Hierarchy
-            </h1>
+        <div>
+            <PageHeader 
+                title="Organization Management" 
+                sub="Hierarchical view of organizational structure" 
+                crumbs={['Home', 'Organization Management']}
+            />
             <HierarchyGrid data={hierarchicalData} />
         </div>
     );

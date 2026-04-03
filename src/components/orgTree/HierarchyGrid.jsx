@@ -3,7 +3,7 @@ import "./styles.css";
 
 export default function HierarchyGrid({ data = [] }) {
     const COLUMNS = 5;
-    const headers = ["Customer", "Country", "City", "Location", "Status"];
+    const headers = ["Customer", "Country", "City", "Location", "Unit"];
     const [expandedNodes, setExpandedNodes] = useState({});
 
     // Build tree structure from flat data
@@ -175,7 +175,15 @@ export default function HierarchyGrid({ data = [] }) {
                                             aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${node.title}`}
                                             aria-expanded={isExpanded}
                                         >
-                                            {isExpanded ? "−" : "+"}
+                                            {isExpanded ? (
+                                                <svg width="8" height="8" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M1 5H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                                                </svg>
+                                            ) : (
+                                                <svg width="8" height="8" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M5 1V9M1 5H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                                                </svg>
+                                            )}
                                         </button>
                                     )}
                                 </div>
