@@ -15,8 +15,7 @@ const generateHierarchicalData = () => {
     
     // Countries
     const countries = [
-        "USA", "Canada", "UK", "Germany", "France", 
-        "Japan", "Australia", "Brazil", "India", "China"
+        "USA", "Canada"
     ];
     const countryIds = {};
     
@@ -26,7 +25,7 @@ const generateHierarchicalData = () => {
     });
     
     // Cities (5 per country)
-    const cityNames = ["North", "South", "East", "West", "Central"];
+    const cityNames = ["North", "South", "East"];
     const cityIds = [];
     
     countries.forEach(country => {
@@ -50,7 +49,7 @@ const generateHierarchicalData = () => {
     });
     
     // Serial Numbers (2 per location)
-    const statuses = ["Active", "Maintenance"];
+    const statuses = ["Active","sdfs"];
     
     locationIds.forEach((locationId, index) => {
         statuses.forEach(status => {
