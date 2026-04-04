@@ -15,12 +15,12 @@ export default function HierarchyGrid({ data = null }) {
             title: node.name || node.title,
             parentId: node.parentId,
             level: node.level,
+            hasChildren: false,
             children: []
         };
         
-        if (node.childrens && node.childrens.length > 0) {
-            normalized.children = node.childrens.map(child => normalizeTree(child));
-        } else if (node.children && node.children.length > 0) {
+        if (node.children && node.children.length > 0) {
+            normalized.hasChildren = true;
             normalized.children = node.children.map(child => normalizeTree(child));
         }
         
@@ -99,6 +99,37 @@ export default function HierarchyGrid({ data = null }) {
         return false;
     }, []);
 
+
+    // Check if node is the last actual child (with data) of its parent
+    const isLastChildWithData = useCallback((node, colIndex, rowIndex, gridData) => {
+        if (!node || colIndex === 0) return false;
+        
+        // Get the parentId of the current node
+        const nodeParentId = node.parentId;
+        if (nodeParentId === null || nodeParentId === undefined) return false;
+        
+        // Look through all rows below to see if there's another sibling with data
+        for (let futureRowIndex = rowIndex + 1; futureRowIndex < gridData.length; futureRowIndex++) {
+            const futureRow = gridData[futureRowIndex];
+            const futureNode = futureRow[colIndex];
+            const previousFutureRow = futureRowIndex > 0 ? gridData[futureRowIndex - 1] : null;
+            
+            // Skip if it's an empty cell or duplicate (same as above)
+            const isFutureNodeEmpty = !futureNode || 
+                (previousFutureRow && 
+                 previousFutureRow[colIndex] && 
+                 previousFutureRow[colIndex].id === futureNode?.id);
+            
+            // If we found an actual node (not empty) with the same parentId, current node is NOT the last
+            if (!isFutureNodeEmpty && futureNode && futureNode.parentId === nodeParentId) {
+                return false;
+            }
+        }
+        
+        // No more siblings with data found below
+        return true;
+    }, []);
+
     return (
         <div className="grid-wrapper">
             <div className="grid-header">
@@ -119,8 +150,10 @@ export default function HierarchyGrid({ data = null }) {
                     
                     return row.map((node, colIndex) => {
                         const isLastInRow = colIndex === COLUMNS - 1;
-                        const hasChildren = node && !node.isCountNode && node.children?.length > 0;
+                        const hasChildren = node && !node.isCountNode && node.hasChildren;
                         const isExpanded = node ? expandedNodes[node.id] !== false : false;
+
+                       
                         
                         const isSameAsAbove = previousRow && 
                                              node && 
@@ -128,6 +161,9 @@ export default function HierarchyGrid({ data = null }) {
                                              previousRow[colIndex].id === node.id;
                         
                         const isLastChildOfParent = node && isLastChild(node, colIndex, row, nextRow);
+                        const isLastSiblingWithData = node && isLastChildWithData(node, colIndex, rowIndex, gridData);
+
+                        console.log(`Last child of parent: ${node?.title} isLastChild=${isLastChildOfParent} isLastSiblingWithData=${isLastSiblingWithData}`);
                         
                         // Check if this empty cell comes after a count node in the same row
                         const isAfterCountNode = hasCountNode && colIndex > countNodeIndex;
@@ -147,8 +183,11 @@ export default function HierarchyGrid({ data = null }) {
                                     key={`${rowIndex}-${colIndex}`} 
                                     className="grid-item"
                                 >
-                                    <div className={`grid-box-wrapper ${isAfterCountNode || !hasNodeBelowInColumn ? 'last-child' : ''}`}>
-                                        
+                                    <div className={
+                                        `grid-box-wrapper
+                                        ${hasChildren ? '' : 'no-children'}
+                                        ${isAfterCountNode || !hasNodeBelowInColumn || isLastChildOfParent ? 'last-child' : ''}`}>
+                                            
                                     </div>
                                 </div>
                             );
@@ -159,7 +198,7 @@ export default function HierarchyGrid({ data = null }) {
                                 key={`${rowIndex}-${colIndex}`} 
                                 className="grid-item"
                             >
-                                <div className={`grid-box-wrapper  ${isLastChildOfParent || node.isCountNode || isLastNodeInColumn ? 'last-child' : ''}`}>
+                                <div className={`grid-box-wrapper  ${isLastChildOfParent || node.isCountNode || isLastNodeInColumn ||isLastSiblingWithData ? 'last-child' : ''}`}>
                                     <div 
                                         className={`grid-box ${node.isCountNode ? 'count-node' : ''} ${!hasChildren ? 'no-children' : ''}`}
                                         tabIndex={node.isCountNode ? 0 : undefined}
