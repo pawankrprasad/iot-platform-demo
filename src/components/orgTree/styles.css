@@ -134,14 +134,14 @@
 
 /* Grid Box */
 .grid-box {
-    background: rgb(30, 37, 53);
+    background: rgb(46, 54, 74);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 8px;
     padding: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     text-align: center;
     min-height: 50px;
-    display: flex;
+    display: flex;  
     align-items: center;
     justify-content: center;
     width: calc(100% - 30px);
@@ -163,11 +163,11 @@
 }
 
 .grid-box::before {
-    left: -24px;
+    left: -25px;
 }
 
 .grid-box::after {
-    right: -24px;
+    right: -25px;
 }
 
 /* Hide left connector for first column */
