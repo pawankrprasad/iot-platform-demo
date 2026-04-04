@@ -12,18 +12,21 @@ const generateHierarchicalData  = {
                 name:"Mass1",
                 parentId:1,
                 level:2,
+                lastChildren:false,
                 children:[
                     {
                         id:4,
                         name:"Mass1.1",
                         parentId:2,
                         level:3,
+                        lastChildren:false,
                         children:[
                                 {
                                     id:1001,
                                     name:"Mass1.1.1",
                                     parentId:4,
                                     level:4,
+                                    lastChildren:true,
                                     children:[]
                                 }
                         ]
@@ -33,18 +36,21 @@ const generateHierarchicalData  = {
                         name:"Mass1.2",
                         parentId:2,
                         level:3,
+                        lastChildren:true,
                         children:[
                                 {
                                     id:6,
                                     name:"Mass1.2.1",
                                     parentId:5,
                                     level:4,
+                                    lastChildren:true,
                                     children:[
                                         {
                                             id:7,
                                             name:"Mass1.2.1.1",
                                             parentId:6,
                                             level:5,
+                                            lastChildren:false,
                                             children:[]
                                         },
                                         {
@@ -52,6 +58,7 @@ const generateHierarchicalData  = {
                                             name:"X1",
                                             parentId:6,
                                             level:5,
+                                            lastChildren:true,
                                             children:[]
                                         }
                                     ]
@@ -65,18 +72,21 @@ const generateHierarchicalData  = {
                 name:"Mass2",
                 level:2,
                 parentId:1,
+                lastChildren:false,
                 children:[
                     {
                         id:8,
                         name:"Mass2.1",
                         level:3,
                         parentId:3,
+                        lastChildren:false,
                         children:[
                                 {
                                     id:9,
                                     name:"Mass2.1.1",
                                     level:4,
                                     parentId:8,
+                                    lastChildren:false,
                                     children:[]
                                 },
                                 {
@@ -84,12 +94,14 @@ const generateHierarchicalData  = {
                                     name:"Mass2.1.2",
                                     level:4,
                                     parentId:8,
+                                    lastChildren:true,
                                     children:[
                                         {
                                             id:900999,
                                             name:"Mass2.1.2.1",
                                             level:5,
                                             parentId:900,
+                                            lastChildren:false,
                                             children:[]
                                         },
                                         {
@@ -97,6 +109,7 @@ const generateHierarchicalData  = {
                                             name:"Mass2.1.2.2",
                                             level:5,
                                             parentId:900,
+                                            lastChildren:true,
                                             children:[]
                                         }
                                     ]
@@ -108,12 +121,14 @@ const generateHierarchicalData  = {
                         name:"Mass2.2",
                         level:3,
                         parentId:3,
+                        lastChildren:true,
                         children:[
                               {
                                     id:9090,
                                     name:"Mass2.2.1",
                                     level:4,
                                     parentId:800,
+                                    lastChildren:true,
                                     children:[]
                               } 
                         ]
@@ -125,6 +140,7 @@ const generateHierarchicalData  = {
                 name:"Mass3",
                 level:2,
                 parentId:1,
+                lastChildren:true,
                 children:[]
             }
     ]
@@ -136,6 +152,7 @@ console.log("Tree data for grid:", generateHierarchicalData);
 
 
 export function OrgManagement() {
+    
     return (
         <div>
             <PageHeader 

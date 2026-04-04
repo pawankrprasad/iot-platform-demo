@@ -1,12 +1,24 @@
-import React, { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import "./styles.css";
+import GridHeader from "./OrgHeader";
+import EmptyCell from "./EmptyCell";
+import NodeCell from "./NodeCell";
+
 
 export default function HierarchyGrid({ data = null }) {
+    // Constants
     const COLUMNS = 5;
     const headers = ["Customer", "Country", "City", "Location", "Unit"];
+    
+    // State
     const [expandedNodes, setExpandedNodes] = useState({});
 
-    // Normalize tree structure (convert childrens -> children, name -> title)
+    // Utilities
+    const buildClassName = useCallback((...classes) => {
+        return classes.filter(Boolean).join(' ');
+    }, []);
+
+    // Tree normalization
     const normalizeTree = useCallback((node) => {
         if (!node) return null;
         
@@ -16,6 +28,7 @@ export default function HierarchyGrid({ data = null }) {
             parentId: node.parentId,
             level: node.level,
             hasChildren: false,
+            lastChildren: node.lastChildren,
             children: []
         };
         
@@ -27,7 +40,7 @@ export default function HierarchyGrid({ data = null }) {
         return normalized;
     }, []);
 
-    // Generate paths from tree
+    // Path generation
     const generatePaths = useCallback((node, expandedNodes, currentPath = []) => {
         if (!node) return [];
         
@@ -43,6 +56,7 @@ export default function HierarchyGrid({ data = null }) {
                 title: `count ${node.children.length}`,
                 isCountNode: true,
                 parentNodeId: node.id,
+                lastChildren: node.lastChildren,
                 children: []
             };
             paths.push([...newPath, countNode]);
@@ -56,14 +70,14 @@ export default function HierarchyGrid({ data = null }) {
         return paths;
     }, []);
 
-    // Convert paths to grid format
+    // Grid data transformation
     const gridData = useMemo(() => {
         if (!data) return [];
         
         const normalizedTree = normalizeTree(data);
         const paths = generatePaths(normalizedTree, expandedNodes);
         
-        return paths.map(path => {
+        const dataddd = paths.map(path => {
             const row = new Array(COLUMNS).fill(null);
             path.forEach((node, idx) => {
                 if (idx < COLUMNS) {
@@ -72,8 +86,11 @@ export default function HierarchyGrid({ data = null }) {
             });
             return row;
         });
+        console.log("Generated grid data:", dataddd);
+        return dataddd;
     }, [data, expandedNodes, normalizeTree, generatePaths, COLUMNS]);
 
+    // Node interactions
     const toggleNode = useCallback((nodeId) => {
         setExpandedNodes(prev => ({
             ...prev,
@@ -81,7 +98,7 @@ export default function HierarchyGrid({ data = null }) {
         }));
     }, []);
 
-    // Check if node should show last-child styling
+    
     const isLastChild = useCallback((node, colIndex, row, nextRow) => {
         if (!node || colIndex === 0) return false;
         
@@ -99,135 +116,79 @@ export default function HierarchyGrid({ data = null }) {
         return false;
     }, []);
 
+    
 
-    // Check if node is the last actual child (with data) of its parent
-    const isLastChildWithData = useCallback((node, colIndex, rowIndex, gridData) => {
-        if (!node || colIndex === 0) return false;
+    // Cell metadata calculator
+    const getCellMetadata = useCallback((node, colIndex, rowIndex, row, gridData) => {
+        const previousRow = rowIndex > 0 ? gridData[rowIndex - 1] : null;
+        const nextRow = rowIndex < gridData.length - 1 ? gridData[rowIndex + 1] : null;
         
-        // Get the parentId of the current node
-        const nodeParentId = node.parentId;
-        if (nodeParentId === null || nodeParentId === undefined) return false;
+
+        const hasChildren = node && !node.isCountNode && node.hasChildren;
+        const isExpanded = node ? expandedNodes[node.id] !== false : false;
         
-        // Look through all rows below to see if there's another sibling with data
-        for (let futureRowIndex = rowIndex + 1; futureRowIndex < gridData.length; futureRowIndex++) {
-            const futureRow = gridData[futureRowIndex];
-            const futureNode = futureRow[colIndex];
-            const previousFutureRow = futureRowIndex > 0 ? gridData[futureRowIndex - 1] : null;
-            
-            // Skip if it's an empty cell or duplicate (same as above)
-            const isFutureNodeEmpty = !futureNode || 
-                (previousFutureRow && 
-                 previousFutureRow[colIndex] && 
-                 previousFutureRow[colIndex].id === futureNode?.id);
-            
-            // If we found an actual node (not empty) with the same parentId, current node is NOT the last
-            if (!isFutureNodeEmpty && futureNode && futureNode.parentId === nodeParentId) {
-                return false;
-            }
-        }
+        const isSameAsAbove = previousRow && 
+            node && 
+            previousRow[colIndex] && 
+            previousRow[colIndex].id === node.id;
         
-        // No more siblings with data found below
-        return true;
-    }, []);
+        const isLastChildOfParent = node && isLastChild(node, colIndex, row, nextRow);
+        const isLastSiblingWithData = node && node.lastChildren;
+
+        const lastChildInColumn = isLastChildOfParent || isLastSiblingWithData;
+        
+        const countNodeIndex = row.findIndex(n => n?.isCountNode);
+        const hasCountNode = countNodeIndex !== -1;
+        const isAfterCountNode = hasCountNode && colIndex > countNodeIndex;
+           
+        return {
+            hasChildren,
+            isExpanded,
+            isSameAsAbove,
+            lastChildInColumn,
+            isAfterCountNode
+        };
+    }, [COLUMNS, expandedNodes, isLastChild]);
 
     return (
         <div className="grid-wrapper">
-            <div className="grid-header">
-                {headers.map((header, idx) => (
-                    <div key={idx} className="header-cell">
-                        {header}
-                    </div>
-                ))}
-            </div>
+            <GridHeader headers={headers} />
             <div className="grid-container">
                 {gridData.map((row, rowIndex) => {
-                    const previousRow = rowIndex > 0 ? gridData[rowIndex - 1] : null;
-                    const nextRow = rowIndex < gridData.length - 1 ? gridData[rowIndex + 1] : null;
-                    
-                    // Check if row has a count node and find its position
-                    const countNodeIndex = row.findIndex(node => node?.isCountNode);
-                    const hasCountNode = countNodeIndex !== -1;
-                    
                     return row.map((node, colIndex) => {
-                        const isLastInRow = colIndex === COLUMNS - 1;
-                        const hasChildren = node && !node.isCountNode && node.hasChildren;
-                        const isExpanded = node ? expandedNodes[node.id] !== false : false;
-
-                       
-                        
-                        const isSameAsAbove = previousRow && 
-                                             node && 
-                                             previousRow[colIndex] && 
-                                             previousRow[colIndex].id === node.id;
-                        
-                        const isLastChildOfParent = node && isLastChild(node, colIndex, row, nextRow);
-                        const isLastSiblingWithData = node && isLastChildWithData(node, colIndex, rowIndex, gridData);
-
-                        console.log(`Last child of parent: ${node?.title} isLastChild=${isLastChildOfParent} isLastSiblingWithData=${isLastSiblingWithData}`);
-                        
-                        // Check if this empty cell comes after a count node in the same row
-                        const isAfterCountNode = hasCountNode && colIndex > countNodeIndex;
-                        
-                        // Check if there are no more nodes below in this column
-                        const hasNodeBelowInColumn = gridData.slice(rowIndex + 1).some(futureRow => 
-                            futureRow[colIndex] && futureRow[colIndex].id !== row[colIndex]?.id
-                        );
-                        
-                        // Check if this is the last actual node in the column
-                        const isLastNodeInColumn = node && !hasNodeBelowInColumn;
+                        const metadata = getCellMetadata(node, colIndex, rowIndex, row, gridData);
+                        const {
+                            hasChildren,
+                            isSameAsAbove,
+                            lastChildInColumn,
+                            isAfterCountNode
+                        } = metadata;
                         
                         // Empty cell or duplicate parent
                         if (!node || isSameAsAbove) {
                             return (
-                                <div 
-                                    key={`${rowIndex}-${colIndex}`} 
-                                    className="grid-item"
-                                >
-                                    <div className={
-                                        `grid-box-wrapper
-                                        ${hasChildren ? '' : 'no-children'}
-                                        ${isAfterCountNode || !hasNodeBelowInColumn || isLastChildOfParent ? 'last-child' : ''}`}>
-                                            
-                                    </div>
-                                </div>
+                                <EmptyCell 
+                                    key={`${rowIndex}-${colIndex}`}
+                                    hasChildren={hasChildren}
+                                    isAfterCountNode={isAfterCountNode}
+                                    lastChildInColumn={lastChildInColumn}
+                                    rowIndex={rowIndex}
+                                    colIndex={colIndex}
+                                    buildClassName={buildClassName}
+                                />
                             );
                         }
                         
                         return (
-                            <div 
-                                key={`${rowIndex}-${colIndex}`} 
-                                className="grid-item"
-                            >
-                                <div className={`grid-box-wrapper  ${isLastChildOfParent || node.isCountNode || isLastNodeInColumn ||isLastSiblingWithData ? 'last-child' : ''}`}>
-                                    <div 
-                                        className={`grid-box ${node.isCountNode ? 'count-node' : ''} ${!hasChildren ? 'no-children' : ''}`}
-                                        tabIndex={node.isCountNode ? 0 : undefined}
-                                        role={node.isCountNode ? 'button' : undefined}
-                                        aria-label={node.isCountNode ? `Expand ${node.title.split(' ')[1]} children` : undefined}
-                                        style={node.isCountNode ? { cursor: 'pointer' } : undefined}
-                                    >
-                                        {node.title}
-                                    </div>
-                                    {!isLastInRow && hasChildren && !node.isCountNode && (
-                                        <button 
-                                            className="expand-btn"
-                                            onClick={() => toggleNode(node.id)}
-                                            aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${node.title}`}
-                                            aria-expanded={isExpanded}
-                                        >
-                                            {isExpanded ? (
-                                                <svg width="8" height="8" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M1 5H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                                                </svg>
-                                            ) : (
-                                                <svg width="8" height="8" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M5 1V9M1 5H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                                                </svg>
-                                            )}
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
+                            <NodeCell 
+                                key={`${rowIndex}-${colIndex}`}
+                                node={node}
+                                metadata={metadata}
+                                rowIndex={rowIndex}
+                                colIndex={colIndex}
+                                toggleNode={toggleNode}
+                                buildClassName={buildClassName}
+                            />
                         );
                     });
                 })}
