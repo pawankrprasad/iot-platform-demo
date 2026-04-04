@@ -1,68 +1,118 @@
 import HierarchyGrid from "../components/orgTree/HierarchyGrid";
 import { PageHeader } from '../components';
 
-/**
- * Generate large hierarchical data structure: Customer → Countries → Cities → Locations → Status
- * Total nodes: 661 (1 customer + 10 countries + 50 cities + 200 locations + 400 statuses)
- */
-const generateHierarchicalData = () => {
-    const data = [];
-    let currentId = 1;
-    
-    // Root: Customer
-    data.push({ id: currentId, title: "Global Corp", parentId: null });
-    const customerId = currentId++;
-    
-    // Countries
-    const countries = [
-        "USA", "Canada"
-    ];
-    const countryIds = {};
-    
-    countries.forEach(country => {
-        data.push({ id: currentId, title: country, parentId: customerId });
-        countryIds[country] = currentId++;
-    });
-    
-    // Cities (5 per country)
-    const cityNames = ["North", "South", "East"];
-    const cityIds = [];
-    
-    countries.forEach(country => {
-        cityNames.forEach(cityName => {
-            const title = `${cityName} ${country}`;
-            data.push({ id: currentId, title, parentId: countryIds[country] });
-            cityIds.push(currentId++);
-        });
-    });
-    
-    // Locations (4 per city)
-    const locationTypes = ["Office", "Warehouse", "Store", "Hub"];
-    const locationIds = [];
-    
-    cityIds.forEach(cityId => {
-        locationTypes.forEach(locType => {
-            const title = `${locType} ${cityId}`;
-            data.push({ id: currentId, title, parentId: cityId });
-            locationIds.push(currentId++);
-        });
-    });
-    
-    // Serial Numbers (2 per location)
-    const statuses = ["Active","sdfs"];
-    
-    locationIds.forEach((locationId, index) => {
-        statuses.forEach(status => {
-            const randomNumber = Math.floor(100000 + Math.random() * 900000);
-            data.push({ id: currentId, title: `SN-${randomNumber}`, parentId: locationId });
-            currentId++;
-        });
-    });
-    
-    return data;
-};
+const generateHierarchicalData  = {
+    id:1,
+    name:"Mass",
+    parentId:null,
+    level:1,
+    childrens:[
+            {
+                id:2,
+                name:"Mass1",
+                parentId:1,
+                level:2,
+                childrens:[
+                    {
+                        id:4,
+                        name:"Mass1.1",
+                        parentId:2,
+                        level:3,
+                        childrens:[
+                                {
+                                    id:1001,
+                                    name:"Mass1.1.1",
+                                    parentId:4,
+                                    level:4,
+                                    childrens:[]
+                                }
+                        ]
+                    },
+                    {
+                        id:5,
+                        name:"Mass1.2",
+                        parentId:2,
+                        level:3,
+                        childrens:[
+                                {
+                                    id:6,
+                                    name:"Mass1.2.1",
+                                    parentId:5,
+                                    level:4,
+                                    childrens:[
+                                        {
+                                            id:7,
+                                            name:"Mass1.2.1.1",
+                                            parentId:6,
+                                            level:5,
+                                            childrens:[]
+                                        },
+                                        {
+                                            id:100,
+                                            name:"X1",
+                                            parentId:6,
+                                            level:5,
+                                            childrens:[]
+                                        }
+                                    ]
+                                }
+                        ]
+                    }
+                ]
+            },
+            {
+                id:3,
+                name:"Mass2",
+                level:2,
+                parentId:1,
+                childrens:[
+                    {
+                        id:8,
+                        name:"Mass2.1",
+                        level:3,
+                        parentId:3,
+                        childrens:[
+                                {
+                                    id:9,
+                                    name:"Mass2.1.1",
+                                    level:4,
+                                    parentId:8,
+                                    childrens:[]
+                                },
+                                {
+                                    id:900,
+                                    name:"Mass2.1.2",
+                                    level:4,
+                                    parentId:8,
+                                    childrens:[]
+                                }
+                        ]
+                    },
+                    {
+                        id:800,
+                        name:"Mass2.2",
+                        level:3,
+                        parentId:3,
+                        childrens:[
+                               
+                        ]
+                    }
+                ]
+            },
+            {
+                id:100001,
+                name:"Mass3",
+                level:2,
+                parentId:1,
+                childrens:[]
+            }
+    ]
+}
 
-const hierarchicalData = generateHierarchicalData();
+// No longer need to flatten the data - HierarchyGrid now accepts tree structure directly
+
+console.log("Tree data for grid:", generateHierarchicalData);
+
 
 export function OrgManagement() {
     return (
@@ -72,7 +122,7 @@ export function OrgManagement() {
                 sub="Hierarchical view of organizational structure" 
                 crumbs={['Home', 'Organization Management']}
             />
-            <HierarchyGrid data={hierarchicalData} />
+            <HierarchyGrid data={generateHierarchicalData} />
         </div>
     );
 }

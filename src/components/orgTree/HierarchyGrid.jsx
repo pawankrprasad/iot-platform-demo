@@ -1,68 +1,67 @@
 import React, { useState, useMemo, useCallback } from "react";
 import "./styles.css";
 
-export default function HierarchyGrid({ data = [] }) {
+export default function HierarchyGrid({ data = null }) {
     const COLUMNS = 5;
     const headers = ["Customer", "Country", "City", "Location", "Unit"];
     const [expandedNodes, setExpandedNodes] = useState({});
 
-    // Build tree structure from flat data
-    const buildTree = useCallback((flatData) => {
-        const nodeMap = new Map();
-        flatData.forEach(item => {
-            nodeMap.set(item.id, { ...item, children: [] });
-        });
+    // Normalize tree structure (convert childrens -> children, name -> title)
+    const normalizeTree = useCallback((node) => {
+        if (!node) return null;
         
-        const roots = [];
-        flatData.forEach(item => {
-            const node = nodeMap.get(item.id);
-            if (!item.parentId) {
-                roots.push(node);
-            } else {
-                const parent = nodeMap.get(item.parentId);
-                if (parent) {
-                    parent.children.push(node);
-                }
-            }
-        });
+        const normalized = {
+            id: node.id,
+            title: node.name || node.title,
+            parentId: node.parentId,
+            level: node.level,
+            children: []
+        };
         
-        return roots;
+        if (node.childrens && node.childrens.length > 0) {
+            normalized.children = node.childrens.map(child => normalizeTree(child));
+        } else if (node.children && node.children.length > 0) {
+            normalized.children = node.children.map(child => normalizeTree(child));
+        }
+        
+        return normalized;
     }, []);
 
     // Generate paths from tree
-    const generatePaths = useCallback((roots, expandedNodes) => {
-        const paths = [];
+    const generatePaths = useCallback((node, expandedNodes, currentPath = []) => {
+        if (!node) return [];
         
-        function traverse(node, currentPath = []) {
-            const newPath = [...currentPath, node];
-            const isCollapsed = expandedNodes[node.id] === false;
-            
-            if (node.children.length === 0) {
-                paths.push(newPath);
-            } else if (isCollapsed) {
-                const countNode = {
-                    id: `${node.id}-count`,
-                    title: `count ${node.children.length}`,
-                    isCountNode: true,
-                    parentNodeId: node.id,
-                    children: []
-                };
-                paths.push([...newPath, countNode]);
-            } else {
-                node.children.forEach(child => traverse(child, newPath));
-            }
+        const paths = [];
+        const newPath = [...currentPath, node];
+        const isCollapsed = expandedNodes[node.id] === false;
+        
+        if (!node.children || node.children.length === 0) {
+            paths.push(newPath);
+        } else if (isCollapsed) {
+            const countNode = {
+                id: `${node.id}-count`,
+                title: `count ${node.children.length}`,
+                isCountNode: true,
+                parentNodeId: node.id,
+                children: []
+            };
+            paths.push([...newPath, countNode]);
+        } else {
+            node.children.forEach(child => {
+                const childPaths = generatePaths(child, expandedNodes, newPath);
+                paths.push(...childPaths);
+            });
         }
         
-        roots.forEach(root => traverse(root));
         return paths;
     }, []);
 
     // Convert paths to grid format
     const gridData = useMemo(() => {
-        if (!data.length) return [];
+        if (!data) return [];
         
-        const roots = buildTree(data);
-        const paths = generatePaths(roots, expandedNodes);
+        const normalizedTree = normalizeTree(data);
+        const paths = generatePaths(normalizedTree, expandedNodes);
         
         return paths.map(path => {
             const row = new Array(COLUMNS).fill(null);
@@ -73,7 +72,7 @@ export default function HierarchyGrid({ data = [] }) {
             });
             return row;
         });
-    }, [data, expandedNodes, buildTree, generatePaths, COLUMNS]);
+    }, [data, expandedNodes, normalizeTree, generatePaths, COLUMNS]);
 
     const toggleNode = useCallback((nodeId) => {
         setExpandedNodes(prev => ({
@@ -148,7 +147,9 @@ export default function HierarchyGrid({ data = [] }) {
                                     key={`${rowIndex}-${colIndex}`} 
                                     className="grid-item"
                                 >
-                                    <div className={`grid-box-wrapper ${isAfterCountNode || !hasNodeBelowInColumn ? 'last-child' : ''}`}></div>
+                                    <div className={`grid-box-wrapper ${isAfterCountNode || !hasNodeBelowInColumn ? 'last-child' : ''}`}>
+                                        
+                                    </div>
                                 </div>
                             );
                         }
@@ -158,9 +159,9 @@ export default function HierarchyGrid({ data = [] }) {
                                 key={`${rowIndex}-${colIndex}`} 
                                 className="grid-item"
                             >
-                                <div className={`grid-box-wrapper ${isLastChildOfParent || node.isCountNode || isLastNodeInColumn ? 'last-child' : ''}`}>
+                                <div className={`grid-box-wrapper  ${isLastChildOfParent || node.isCountNode || isLastNodeInColumn ? 'last-child' : ''}`}>
                                     <div 
-                                        className={`grid-box ${node.isCountNode ? 'count-node' : ''}`}
+                                        className={`grid-box ${node.isCountNode ? 'count-node' : ''} ${!hasChildren ? 'no-children' : ''}`}
                                         tabIndex={node.isCountNode ? 0 : undefined}
                                         role={node.isCountNode ? 'button' : undefined}
                                         aria-label={node.isCountNode ? `Expand ${node.title.split(' ')[1]} children` : undefined}

@@ -162,6 +162,10 @@
     background: white;
 }
 
+.no-children::after {
+    display: none;
+}
+
 .grid-box::before {
     left: -25px;
 }
