@@ -17,6 +17,8 @@ const NAV = [
       { id: 'reports', label: 'Reports', icon: 'file', path: '/reports' },
       { id: 'users', label: 'User Management', icon: 'users', path: '/users' },
       { id: 'orgs', label: 'Organizations', icon: 'building', path: '/orgs' },
+      { id: 'brands', label: 'Brand Management', icon: 'tags', path: '/brands' },
+      { id: 'locations', label: 'Location Management', icon: 'location', path: '/locations' },
     ],
   },
 ];
@@ -30,6 +32,8 @@ const ICONS = {
   file: '&#128196;',
   users: '&#128101;',
   building: '&#127970;',
+  tags: '&#128233;',
+  location: '&#128205;',
 };
 
 export default function Sidebar({ nav, activeId, dark }) {

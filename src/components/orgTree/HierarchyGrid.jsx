@@ -5,13 +5,14 @@ import EmptyCell from "./EmptyCell";
 import NodeCell from "./NodeCell";
 
 
-export default function HierarchyGrid({ data = null }) {
+export default function HierarchyGrid({ data = null, onSelectedNodeChange = null }) {
     // Constants
     const COLUMNS = 5;
     const headers = ["Customer", "Country", "City", "Location", "Unit"];
     
     // State
     const [expandedNodes, setExpandedNodes] = useState({});
+    const [selectedNodeId, setSelectedNodeId] = useState(null);
 
     // Utilities
     const buildClassName = useCallback((...classes) => {
@@ -95,6 +96,25 @@ export default function HierarchyGrid({ data = null }) {
             [nodeId]: prev[nodeId] === false ? true : false
         }));
     }, []);
+
+    const handleNodeClick = useCallback((node) => {
+        setSelectedNodeId(node.id);
+        if (onSelectedNodeChange) {
+            // Pass the original node data (before normalization)
+            const findOriginalNode = (treeNode) => {
+                if (treeNode.id === node.id) return treeNode;
+                if (treeNode.children) {
+                    for (const child of treeNode.children) {
+                        const found = findOriginalNode(child);
+                        if (found) return found;
+                    }
+                }
+                return null;
+            };
+            const originalNode = findOriginalNode(data);
+            onSelectedNodeChange(originalNode);
+        }
+    }, [onSelectedNodeChange, data]);
 
     
     const isLastChild = useCallback((node, colIndex, row, nextRow) => {
@@ -185,6 +205,8 @@ export default function HierarchyGrid({ data = null }) {
                                 rowIndex={rowIndex}
                                 colIndex={colIndex}
                                 toggleNode={toggleNode}
+                                handleNodeClick={handleNodeClick}
+                                isSelected={selectedNodeId === node.id}
                                 buildClassName={buildClassName}
                             />
                         );

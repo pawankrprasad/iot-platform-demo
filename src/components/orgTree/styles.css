@@ -148,6 +148,19 @@
     position: relative;
     margin: auto;
     color: white;
+    transition: all 0.2s ease;
+}
+
+/* Selected Node Styles */
+.grid-box.selected {
+    background: rgba(33, 150, 243, 0.3);
+    border-color: rgba(33, 150, 243, 0.6);
+    box-shadow: 0 0 15px rgba(33, 150, 243, 0.5);
+}
+
+.grid-box:hover {
+    background: rgb(56, 64, 84);
+    border-color: rgba(255, 255, 255, 0.15);
 }
 
 /* Horizontal connector lines (before and after) */

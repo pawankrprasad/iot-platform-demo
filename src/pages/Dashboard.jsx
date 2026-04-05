@@ -24,7 +24,7 @@ export default function Dashboard({ nav }) {
       <div style={st.grid(4)}>
         <StatCard label="Total Brands" value={BRANDS.length} color="#e917bbff" icon={<FaLayerGroup color='#e917bbff' />} onClick={() => nav('brands')} sub="Brands" />
         <StatCard label="Total Devices" value={DEVICES.length} color="#3b82f6" icon={<FaSatelliteDish color='#3b82f6' />} onClick={() => nav('assets')} sub="View inventory" />
-        <StatCard label="Locations" value={9} color="#C6CC14" icon={<FaLocationArrow color='#C6CC14' />} />
+        <StatCard label="Locations" value={9} color="#C6CC14" icon={<FaLocationArrow color='#C6CC14'/>} onClick={()=>nav('locations')}/>
         <StatCard label="Users" value={56} color="#7C14CC" icon={<FaUsers color='#7C14CC' />} onClick={() => nav('users')} />
       </div>
       <div style={st.grid(4)}>

@@ -1,5 +1,5 @@
 import ExpandButton from "./ExpandButton";
-const NodeCell = ({ node, metadata, rowIndex, colIndex, toggleNode, buildClassName }) => {
+const NodeCell = ({ node, metadata, rowIndex, colIndex, toggleNode, handleNodeClick, isSelected, buildClassName }) => {
     const {
         isLastInRow,
         hasChildren,
@@ -18,12 +18,21 @@ const NodeCell = ({ node, metadata, rowIndex, colIndex, toggleNode, buildClassNa
                     className={buildClassName(
                         'grid-box',
                         node.isCountNode && 'count-node',
-                        !hasChildren && 'no-children'
+                        !hasChildren && 'no-children',
+                        isSelected && 'selected'
                     )}
-                    tabIndex={node.isCountNode ? 0 : undefined}
-                    role={node.isCountNode ? 'button' : undefined}
-                    aria-label={node.isCountNode ? `Expand ${node.title.split(' ')[1]} children` : undefined}
-                    style={node.isCountNode ? { cursor: 'pointer' } : undefined}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={node.isCountNode ? `Expand ${node.title.split(' ')[1]} children` : `Select ${node.title}`}
+                    aria-selected={isSelected}
+                    onClick={() => handleNodeClick(node)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handleNodeClick(node);
+                        }
+                    }}
+                    style={{ cursor: 'pointer' }}
                 >
                     {node.title}
                 </div>

@@ -22,6 +22,8 @@ const UserManagement = lazy(() => import('./pages/UserManagement').then((m) => (
 const AddUser = lazy(() => import('./pages/UserManagement').then((m) => ({ default: m.AddUser })));
 const AddRole = lazy(() => import('./pages/UserManagement').then((m) => ({ default: m.AddRole })));
 const OrgManagement = lazy(() => import('./pages/OrgManagement').then((m) => ({ default: m.OrgManagement })));
+const BrandManagement = lazy(() => import('./pages/BrandManagement'));
+const LocationManagement = lazy(() => import('./pages/LocationManagement'));
 
 const NAV = [
   { section: 'Overview', items: [{ id: 'dashboard', label: 'Dashboard', icon: 'grid', path: '/' }] },
@@ -136,6 +138,9 @@ function Shell({ onSignOut }) {
               <Route path="/users/add" element={<AddUser nav={nav} />} />
               <Route path="/users/add-role" element={<AddRole nav={nav} />} />
               <Route path="/orgs" element={<OrgManagement nav={nav} />} />
+
+              <Route path="/brands" element={<BrandManagement />} />
+              <Route path="/locations" element={<LocationManagement />} />
 
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
