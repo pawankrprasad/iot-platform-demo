@@ -77,7 +77,7 @@ export default function HierarchyGrid({ data = null }) {
         const normalizedTree = normalizeTree(data);
         const paths = generatePaths(normalizedTree, expandedNodes);
         
-        const dataddd = paths.map(path => {
+        return paths.map(path => {
             const row = new Array(COLUMNS).fill(null);
             path.forEach((node, idx) => {
                 if (idx < COLUMNS) {
@@ -86,8 +86,6 @@ export default function HierarchyGrid({ data = null }) {
             });
             return row;
         });
-        console.log("Generated grid data:", dataddd);
-        return dataddd;
     }, [data, expandedNodes, normalizeTree, generatePaths, COLUMNS]);
 
     // Node interactions

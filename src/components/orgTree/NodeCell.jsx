@@ -25,7 +25,7 @@ const NodeCell = ({ node, metadata, rowIndex, colIndex, toggleNode, buildClassNa
                     aria-label={node.isCountNode ? `Expand ${node.title.split(' ')[1]} children` : undefined}
                     style={node.isCountNode ? { cursor: 'pointer' } : undefined}
                 >
-                    {node.title} {node.lastChildren? "Yes":"No"}
+                    {node.title}
                 </div>
                 {!isLastInRow && hasChildren && !node.isCountNode && (
                     <ExpandButton onClick={() => toggleNode(node.id)} isExpanded={isExpanded} node={node} />

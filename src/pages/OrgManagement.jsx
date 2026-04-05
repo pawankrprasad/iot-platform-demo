@@ -9,21 +9,21 @@ const generateHierarchicalData  = {
     children:[
             {
                 id:2,
-                name:"Mass1",
+                name:"USA",
                 parentId:1,
                 level:2,
                 lastChildren:false,
                 children:[
                     {
                         id:4,
-                        name:"Mass1.1",
+                        name:"New York",
                         parentId:2,
                         level:3,
                         lastChildren:false,
                         children:[
                                 {
                                     id:1001,
-                                    name:"Mass1.1.1",
+                                    name:"Location A",
                                     parentId:4,
                                     level:4,
                                     lastChildren:true,
@@ -33,21 +33,21 @@ const generateHierarchicalData  = {
                     },
                     {
                         id:5,
-                        name:"Mass1.2",
+                        name:"Los Angeles",
                         parentId:2,
                         level:3,
                         lastChildren:true,
                         children:[
                                 {
                                     id:6,
-                                    name:"Mass1.2.1",
+                                    name:"Location B",
                                     parentId:5,
                                     level:4,
                                     lastChildren:true,
                                     children:[
                                         {
                                             id:7,
-                                            name:"Mass1.2.1.1",
+                                            name:"Unit 1",
                                             parentId:6,
                                             level:5,
                                             lastChildren:false,
@@ -55,7 +55,7 @@ const generateHierarchicalData  = {
                                         },
                                         {
                                             id:100,
-                                            name:"X1",
+                                            name:"Unit 2",
                                             parentId:6,
                                             level:5,
                                             lastChildren:true,
@@ -69,21 +69,21 @@ const generateHierarchicalData  = {
             },
             {
                 id:3,
-                name:"Mass2",
+                name:"UK",
                 level:2,
                 parentId:1,
                 lastChildren:false,
                 children:[
                     {
                         id:8,
-                        name:"Mass2.1",
+                        name:"London",
                         level:3,
                         parentId:3,
                         lastChildren:false,
                         children:[
                                 {
                                     id:9,
-                                    name:"Mass2.1.1",
+                                    name:"Location C",
                                     level:4,
                                     parentId:8,
                                     lastChildren:false,
@@ -91,14 +91,14 @@ const generateHierarchicalData  = {
                                 },
                                 {
                                     id:900,
-                                    name:"Mass2.1.2",
+                                    name:"Location D",
                                     level:4,
                                     parentId:8,
                                     lastChildren:true,
                                     children:[
                                         {
                                             id:900999,
-                                            name:"Mass2.1.2.1",
+                                            name:"Unit 3",
                                             level:5,
                                             parentId:900,
                                             lastChildren:false,
@@ -106,7 +106,7 @@ const generateHierarchicalData  = {
                                         },
                                         {
                                             id:900998,
-                                            name:"Mass2.1.2.2",
+                                            name:"Unit 4",
                                             level:5,
                                             parentId:900,
                                             lastChildren:true,
@@ -118,14 +118,14 @@ const generateHierarchicalData  = {
                     },
                     {
                         id:800,
-                        name:"Mass2.2",
+                        name:"Manchester",
                         level:3,
                         parentId:3,
                         lastChildren:true,
                         children:[
                               {
                                     id:9090,
-                                    name:"Mass2.2.1",
+                                    name:"Location E",
                                     level:4,
                                     parentId:800,
                                     lastChildren:true,
@@ -137,7 +137,7 @@ const generateHierarchicalData  = {
             },
             {
                 id:100001,
-                name:"Mass3",
+                name:"Germany",
                 level:2,
                 parentId:1,
                 lastChildren:true,
