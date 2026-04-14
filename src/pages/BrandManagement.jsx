@@ -17,11 +17,6 @@ export default function BrandManagement() {
         title="Brand Management" 
         sub="Manage brands and their device integrations" 
         crumbs={['Home', 'Brand Management']}
-        actions={[
-          <Btn key="add" onClick={() => alert('Onboard New Brand functionality coming soon!')}>
-            + Onboard New Brand
-          </Btn>
-        ]} 
       />
       <Card>
         <DataTable 

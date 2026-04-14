@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTheme, styles } from '../context/ThemeContext';
 import { Card, Btn, DataTable, PageHeader } from '../components';
 import { FILES, DEVICES } from '../mock-data';
@@ -45,16 +45,65 @@ export function FileManagement({ nav }) {
 export function UploadFile({ nav }) {
     const { dark } = useTheme(); const st = styles(dark);
     const [drag, setDrag] = useState(false);
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const fileInputRef = useRef(null);
+
+    const handleFiles = (files) => {
+        const fileList = Array.from(files);
+        setSelectedFiles(fileList);
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setDrag(false);
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            handleFiles(e.dataTransfer.files);
+        }
+    };
+
+    const handleFileSelect = (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            handleFiles(e.target.files);
+        }
+    };
+
+    const handleBrowseClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const removeFile = (index) => {
+        setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    };
     return (<div>
         <PageHeader title="Upload File" crumbs={['Home', 'Files', 'Upload']} actions={[<Btn key="b" variant="ghost" onClick={() => nav('files')}>Cancel</Btn>]} />
         <Card>
-            <div onDragOver={e => { e.preventDefault(); setDrag(true) }} onDragLeave={() => setDrag(false)} onDrop={() => setDrag(false)}
-                style={{ border: '2px dashed ' + (drag ? '#3b82f6' : dark ? '#ffffff20' : '#e2e8f0'), borderRadius: 10, padding: '40px 20px', textAlign: 'center', marginBottom: 20, transition: 'all .2s' }}>
+            <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                onChange={handleFileSelect}
+                style={{ display: 'none' }}
+            />
+            <div onDragOver={e => { e.preventDefault(); setDrag(true) }} onDragLeave={() => setDrag(false)} onDrop={handleDrop}
+                style={{ border: '2px dashed ' + (drag ? '#3b82f6' : dark ? '#ffffff20' : '#e2e8f0'), borderRadius: 10, padding: '40px 20px', textAlign: 'center', marginBottom: 20, transition: 'all .2s', cursor: 'pointer' }}
+                onClick={handleBrowseClick}>
                 <div style={{ fontSize: 32, marginBottom: 8 }}>📁</div>
                 <div style={{ fontWeight: 600, marginBottom: 4 }}>Drag and drop files here</div>
                 <div style={{ color: '#64748b', fontSize: 12.5, marginBottom: 12 }}>or click to browse</div>
-                <Btn>Browse Files</Btn>
+                <Btn onClick={(e) => { e.stopPropagation(); handleBrowseClick(); }}>Browse Files</Btn>
             </div>
+            {selectedFiles.length > 0 && (
+                <div style={{ marginBottom: 20 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>Selected Files:</div>
+                    {selectedFiles.map((file, idx) => (
+                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', background: dark ? '#1e293b' : '#f8fafc', borderRadius: 6, marginBottom: 6, fontSize: 12.5 }}>
+                            <span style={{ flex: 1 }}>{file.name}</span>
+                            <span style={{ color: '#64748b' }}>({(file.size / 1024).toFixed(1)} KB)</span>
+                            <button onClick={() => removeFile(idx)} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '2px 6px', fontSize: 14 }}>×</button>
+                        </div>
+                    ))}
+                </div>
+            )}
             <div style={st.grid(2)}>
 
                 <div>
@@ -114,7 +163,7 @@ export function SelectTargets({ nav }) {
                 {tab === 'tags' && ['production', 'floor1', 'floor2', 'warehouse', 'test'].map(t => <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px solid ' + (dark ? '#ffffff08' : '#f1f5f9') }}><input type="checkbox" /><span style={styles(dark).badge('#8b5cf6')}>{t}</span></div>)}
 
             </div>
-            <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end', gap: 10 }}><Btn variant="ghost" onClick={() => nav('files')}>Cancel</Btn><Btn onClick={() => nav('files')}>Schedule Transfer</Btn></div>
+            <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end', gap: 10 }}><Btn variant="ghost" onClick={() => nav('files')}>Cancel</Btn><Btn onClick={() => nav('files')}>Transfer</Btn></div>
         </Card>
     </div>);
 }

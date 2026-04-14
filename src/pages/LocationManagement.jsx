@@ -26,11 +26,6 @@ export default function LocationManagement() {
         title="Location Management" 
         sub="Manage locations and monitor device deployments" 
         crumbs={['Home', 'Location Management']}
-        actions={[
-          <Btn key="add" onClick={() => alert('Add New Location functionality coming soon!')}>
-            + Add Location
-          </Btn>
-        ]} 
       />
       <Card>
         <DataTable 
