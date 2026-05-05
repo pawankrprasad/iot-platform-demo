@@ -1,19 +1,23 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { useTheme, styles } from '../context/ThemeContext';
+import { authApi } from '../api';
+import { setLoading as setAuthLoading, loginSuccess, loginFailed } from '../store';
 
-export default function Login({ onLogin }) {
+export default function Login() {
     const { dark } = useTheme();
     const st = styles(dark);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const [email, setEmail] = useState('admin@smatryx.com');
-    const [password, setPassword] = useState('admin');
+    const [email, setEmail] = useState('pkprasad06@gmail.com');
+    const [password, setPassword] = useState('Welcome@123!');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
@@ -21,18 +25,19 @@ export default function Login({ onLogin }) {
             setError('Please enter your email and password.');
             return;
         }
-
+        dispatch(setAuthLoading());
         setLoading(true);
-        // Simulate async auth
-        setTimeout(() => {
+        try {
+            const { data: { accessToken = '', refreshToken = '', user = null } } = await authApi.login({ email, password });
+            dispatch(loginSuccess({ accessToken, refreshToken, user }));
+            navigate('/', { replace: true });
+        } catch (err) {
+            const message = err?.message ?? 'Login failed. Please check your credentials.';
+            dispatch(loginFailed(message));
+            setError(message);
+        } finally {
             setLoading(false);
-            if (email === 'admin@smatryx.com' && password === 'admin') {
-                onLogin?.();
-                navigate('/');
-            } else {
-                setError('Invalid credentials. Try admin@smatryx.com / admin');
-            }
-        }, 500);
+        }
     };
 
     const bg = dark ? '#0f1117' : '#f4f6f9';

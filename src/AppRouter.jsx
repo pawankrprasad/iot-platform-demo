@@ -1,8 +1,17 @@
-import { useState, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTheme, styles } from './context/ThemeContext';
 import Sidebar from './layout/Sidebar';
 import Login from './pages/Login';
+import {
+  bootstrapSuccess,
+  bootstrapFailed,
+  setBootstrapped,
+  logoutAction,
+  selectIsAuthenticated,
+  selectIsBootstrapped,
+} from './store';
 
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const ConnectivityOverview = lazy(() => import('./pages/Connectivity').then((m) => ({ default: m.ConnectivityOverview })));
@@ -40,11 +49,13 @@ function Shell({ onSignOut }) {
   const st = styles(dark);
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
 
-  const signOut = () => {
+  const signOut = async () => {
     setUserMenuOpen(false);
-    onSignOut();
-    navigate('/login');
+    try { await import('./api').then(m => m.authApi.logout()); } catch { /* ignore */ }
+    dispatch(logoutAction());
+    navigate('/login', { replace: true });
   };
 
   const routeMap = {
@@ -151,38 +162,115 @@ function Shell({ onSignOut }) {
   );
 }
 
-export default function AppRouter() {
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    () => localStorage.getItem('isAuthenticated') === 'true'
+// ---------------------------------------------------------------------------
+// Route guards
+// ---------------------------------------------------------------------------
+
+/** Full-page loader shown while the app restores session on first load */
+function AppLoader() {
+  const { dark } = useTheme();
+  return (
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: dark ? '#0f1117' : '#f4f6f9',
+        flexDirection: 'column',
+        gap: 12,
+      }}
+    >
+      <div
+        style={{
+          width: 36,
+          height: 36,
+          border: '3px solid #3b82f630',
+          borderTop: '3px solid #3b82f6',
+          borderRadius: '50%',
+          animation: 'spin 0.8s linear infinite',
+        }}
+      />
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <span style={{ fontSize: 13, color: '#64748b' }}>Restoring session…</span>
+    </div>
   );
+}
 
-  const handleLogin = () => {
-    localStorage.setItem('isAuthenticated', 'true');
-    setIsAuthenticated(true);
-  };
+/** Blocks unauthenticated users and redirects to /login */
+function ProtectedRoute({ children }) {
+  const bootstrapped = useSelector(selectIsBootstrapped);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  if (!bootstrapped) return <AppLoader />;
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+}
 
-  const handleSignOut = () => {
-    localStorage.removeItem('isAuthenticated');
-    setIsAuthenticated(false);
-  };
+/** Blocks already-authenticated users from accessing public pages (e.g. /login) */
+function PublicRoute({ children }) {
+  const bootstrapped = useSelector(selectIsBootstrapped);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  if (!bootstrapped) return <AppLoader />;
+  return isAuthenticated ? <Navigate to="/" replace /> : children;
+}
 
+/** Restores session from localStorage token exactly once on app mount */
+function AuthBootstrap() {
+  const dispatch = useDispatch();
+  const bootstrapped = useSelector(selectIsBootstrapped);
+
+  useEffect(() => {
+    if (bootstrapped) return;
+
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      dispatch(setBootstrapped());
+      return;
+    }
+
+    // Validate stored token by calling GET /me
+    import('./api/users.api').then(({ usersApi }) => {
+      usersApi.getProfile()
+        .then((user) => dispatch(bootstrapSuccess(user)))
+        .catch((err) => {
+          if (err?.status === 401) {
+            dispatch(bootstrapFailed());
+          } else {
+            // Network/server error — keep existing auth state optimistically
+            dispatch(setBootstrapped());
+          }
+        });
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return null;
+}
+
+// ---------------------------------------------------------------------------
+// Root router
+// ---------------------------------------------------------------------------
+
+export default function AppRouter() {
   return (
     <Router>
+      <AuthBootstrap />
       <Routes>
+        {/* Public routes — redirect to / if already logged in */}
         <Route
           path="/login"
           element={
-            isAuthenticated
-              ? <Navigate to="/" replace />
-              : <Login onLogin={handleLogin} />
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
           }
         />
+
+        {/* Protected routes — redirect to /login if not authenticated */}
         <Route
           path="/*"
           element={
-            isAuthenticated
-              ? <Shell onSignOut={handleSignOut} />
-              : <Navigate to="/login" replace />
+            <ProtectedRoute>
+              <Shell />
+            </ProtectedRoute>
           }
         />
       </Routes>
