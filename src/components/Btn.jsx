@@ -1,10 +1,17 @@
-import { useTheme, styles } from '../context/ThemeContext';
+import { Button } from '@mantine/core';
 
-export function Btn({ children, variant, onClick, style }) {
-  const { dark } = useTheme();
+const VARIANT_MAP = {
+  primary: { variant: 'filled', color: 'blue' },
+  danger:  { variant: 'filled', color: 'red' },
+  success: { variant: 'filled', color: 'green' },
+  ghost:   { variant: 'subtle', color: 'gray' },
+};
+
+export function Btn({ children, variant = 'primary', onClick, style, disabled }) {
+  const { variant: mantineVariant, color } = VARIANT_MAP[variant] ?? VARIANT_MAP.primary;
   return (
-    <button style={{ ...styles(dark).btn(variant), ...style }} onClick={onClick}>
+    <Button variant={mantineVariant} color={color} size="sm" onClick={onClick} style={style} disabled={disabled}>
       {children}
-    </button>
+    </Button>
   );
 }

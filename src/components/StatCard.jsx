@@ -1,25 +1,33 @@
-import { useState } from 'react';
-import { useTheme, styles } from '../context/ThemeContext';
+import { Paper, Text, Group, Stack, Box } from '@mantine/core';
 
 export function StatCard({ label, value, color, icon, onClick, sub }) {
-  const { dark } = useTheme();
-  const st = styles(dark);
-  const [hov, setHov] = useState(false);
   return (
-    <div
-      style={{ ...st.statCard(color), transform: hov ? 'translateY(-2px)' : 'none', boxShadow: hov ? '0 4px 16px #0003' : 'none' }}
+    <Paper
+      withBorder
+      radius="md"
+      h={100}
+      p="md"
+      mb="md"
       onClick={onClick}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
+      className="stat-card"
+      style={{ borderTop: `3px solid ${color}`, cursor: onClick ? 'pointer' : 'default' }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div>
-          <div style={st.statNum}>{value}</div>
-          <div style={st.statLabel}>{label}</div>
-          {sub && <div style={{ fontSize: 11, color, marginTop: 6 }}>{sub}</div>}
-        </div>
-        <span style={{ fontSize: 24 }}>{icon}</span>
-      </div>
-    </div>
+      <Group justify="space-between" align="flex-start">
+        <Stack gap={4}>
+          <Text size="28px" fw={700} lh={1}>
+            {value}
+          </Text>
+          <Text size="xs" c="dimmed">
+            {label}
+          </Text>
+          {sub && (
+            <Text size="xs" style={{ color }} mt={4}>
+              {sub}
+            </Text>
+          )}
+        </Stack>
+        <Box fz={24}>{icon}</Box>
+      </Group>
+    </Paper>
   );
 }

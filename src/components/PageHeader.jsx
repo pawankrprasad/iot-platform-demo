@@ -1,18 +1,20 @@
-import { useTheme, styles } from '../context/ThemeContext';
+import { Breadcrumbs, Anchor, Title, Text, Group, Stack } from '@mantine/core';
 
 export function PageHeader({ title, sub, crumbs, actions }) {
-  const { dark } = useTheme();
-  const st = styles(dark);
   return (
-    <div style={st.pageHeader}>
-      {crumbs && <div style={st.breadcrumb}>{crumbs.join(' > ')}</div>}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div>
-          <h1 style={st.pageTitle}>{title}</h1>
-          {sub && <p style={st.pageSub}>{sub}</p>}
-        </div>
-        {actions && <div style={{ display: 'flex', gap: 8 }}>{actions}</div>}
-      </div>
-    </div>
+    <Stack gap="md" mb="xl">
+      {crumbs && (
+        <Breadcrumbs separator=">" fz="xs" c="dimmed">
+          {crumbs.map((c, i) => <Text key={i} size="xs">{c}</Text>)}
+        </Breadcrumbs>
+      )}
+      <Group justify="space-between" align="flex-start">
+        <Stack gap={5}>
+          <Title order={4}>{title}</Title>
+          {sub && <Text size="xs" c="dimmed">{sub}</Text>}
+        </Stack>
+        {actions && <Group gap="md">{actions}</Group>}
+      </Group>
+    </Stack>
   );
 }

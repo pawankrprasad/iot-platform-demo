@@ -27,9 +27,7 @@ const ScheduledReports = lazy(() => import('./pages/Reports').then((m) => ({ def
 const FileManagement = lazy(() => import('./pages/FileManagement').then((m) => ({ default: m.FileManagement })));
 const UploadFile = lazy(() => import('./pages/FileManagement').then((m) => ({ default: m.UploadFile })));
 const SelectTargets = lazy(() => import('./pages/FileManagement').then((m) => ({ default: m.SelectTargets })));
-const UserManagement = lazy(() => import('./pages/UserManagement').then((m) => ({ default: m.UserManagement })));
-const AddUser = lazy(() => import('./pages/UserManagement').then((m) => ({ default: m.AddUser })));
-const AddRole = lazy(() => import('./pages/UserManagement').then((m) => ({ default: m.AddRole })));
+const UserManagementRoutes = lazy(() => import('@/features/user-management/UserManagementRoutes'));
 const OrgManagement = lazy(() => import('./pages/OrgManagement').then((m) => ({ default: m.OrgManagement })));
 const BrandManagement = lazy(() => import('./pages/BrandManagement'));
 const LocationManagement = lazy(() => import('./pages/LocationManagement'));
@@ -37,7 +35,7 @@ const LocationManagement = lazy(() => import('./pages/LocationManagement'));
 const NAV = [
   { section: 'Overview', items: [{ id: 'dashboard', label: 'Dashboard', icon: 'grid', path: '/' }] },
   { section: 'Operations', items: [{ id: 'connectivity', label: 'Connectivity', icon: 'wifi', path: '/connectivity' }, { id: 'assets', label: 'Asset Management', icon: 'server', path: '/assets' }, { id: 'alerts', label: 'Alerts & Analytics', icon: 'bell', path: '/alerts' }] },
-  { section: 'Management', items: [{ id: 'files', label: 'File Management', icon: 'folder', path: '/files' }, { id: 'reports', label: 'Reports', icon: 'file', path: '/reports' }, { id: 'users', label: 'User Management', icon: 'users', path: '/users' }, { id: 'orgs', label: 'Organizations', icon: 'building', path: '/orgs' }] },
+  { section: 'Management', items: [{ id: 'files', label: 'File Management', icon: 'folder', path: '/files' }, { id: 'reports', label: 'Reports', icon: 'file', path: '/reports' }, { id: 'user-management', label: 'User Management', icon: 'users', path: '/user-management' }, { id: 'orgs', label: 'Organizations', icon: 'building', path: '/orgs' }] },
 ];
 
 const ICONS = { grid: '&#9632;', wifi: '&#128225;', server: '&#128194;', bell: '&#128276;', folder: '&#128193;', file: '&#128196;', users: '&#128101;', building: '&#127970;' };
@@ -76,9 +74,9 @@ function Shell({ onSignOut }) {
     'files': '/files',
     'upload-file': '/files/upload',
     'select-targets': '/files/select-targets',
-    'users': '/users',
-    'add-user': '/users/add',
-    'add-role': '/users/add-role',
+    'user-management': '/user-management',
+    'add-user': '/user-management/users/add',
+    'add-role': '/user-management/roles/add',
     'orgs': '/orgs',
   };
 
@@ -145,9 +143,7 @@ function Shell({ onSignOut }) {
               <Route path="/files/upload" element={<UploadFile nav={nav} />} />
               <Route path="/files/select-targets" element={<SelectTargets nav={nav} />} />
 
-              <Route path="/users" element={<UserManagement nav={nav} />} />
-              <Route path="/users/add" element={<AddUser nav={nav} />} />
-              <Route path="/users/add-role" element={<AddRole nav={nav} />} />
+              <Route path="/user-management/*" element={<UserManagementRoutes />} />
               <Route path="/orgs" element={<OrgManagement nav={nav} />} />
 
               <Route path="/brands" element={<BrandManagement />} />

@@ -8,6 +8,8 @@ import { AiFillAlert, AiTwotoneAlert, } from "react-icons/ai";
 import { RiAlertFill } from "react-icons/ri";
 import { LuTriangleAlert } from "react-icons/lu";
 
+import { Tabs } from '@mantine/core';
+
 export default function AlertsAnalytics({ nav }) {
   const { dark } = useTheme(); const st = styles(dark);
   const [filter, setFilter] = useState('All');
@@ -18,10 +20,15 @@ export default function AlertsAnalytics({ nav }) {
   return (
     <div>
       <PageHeader title="Alerts & Analytics" sub="Monitor and analyse alerts" crumbs={['Home', 'Alerts']} />
-      <div style={{ display: 'flex', borderBottom: '1px solid ' + (dark ? '#ffffff10' : '#e2e8f0'), marginBottom: 16 }}>
-        {['overview', 'history', 'analytics'].map(t => <button key={t} style={st.tab(tab === t)} onClick={() => setTab(t)}>{t.charAt(0).toUpperCase() + t.slice(1)}</button>)}
-      </div>
-      {tab === 'overview' && <>
+      
+       <Tabs defaultValue="overview">
+        <Tabs.List>
+          <Tabs.Tab value="overview">Overview</Tabs.Tab>
+          <Tabs.Tab value="history">History</Tabs.Tab>
+          <Tabs.Tab value="analytics">Analytics</Tabs.Tab>
+        </Tabs.List>
+
+        <Tabs.Panel value="overview" pt="md">
         <div style={st.grid(4)}>
           <StatCard label="Critical" value={counts.Critical} color="#ef4444" icon={<AiFillAlert color='#ef4444' />} onClick={() => setFilter('Critical')} />
           <StatCard label="High" value={counts.High} color="#f97316" icon={<AiTwotoneAlert color='#f97316' />} onClick={() => setFilter('High')} />
@@ -39,16 +46,21 @@ export default function AlertsAnalytics({ nav }) {
             { key: 'status', label: 'Status', render: v => <span style={styles(dark).badge(v === 'Active' ? '#ef4444' : '#10b981')}>{v}</span> }
           ]} rows={filtered} onRow={() => nav('alert-detail')} />
         </Card>
-      </>}
-      {tab === 'analytics' && <div style={st.grid(2)}>
-        <Card><div style={{ fontWeight: 600, marginBottom: 12 }}>Alert Frequency</div><ResponsiveContainer width="100%" height={220}><BarChart data={alertFreqData}><CartesianGrid strokeDasharray="3 3" stroke={dark ? '#ffffff0a' : '#f0f0f0'} /><XAxis dataKey="day" tick={{ fontSize: 10, fill: '#64748b' }} /><YAxis tick={{ fontSize: 10, fill: '#64748b' }} /><Tooltip contentStyle={{ background: dark ? '#1e2535' : '#fff', border: 'none', borderRadius: 8, fontSize: 11 }} /><Bar dataKey="Critical" fill="#ef4444" stackId="a" /><Bar dataKey="High" fill="#f97316" stackId="a" /><Bar dataKey="Medium" fill="#eab308" stackId="a" /><Bar dataKey="Low" fill="#3b82f6" stackId="a" radius={[4, 4, 0, 0]} /><Legend /></BarChart></ResponsiveContainer></Card>
-        <Card><div style={{ fontWeight: 600, marginBottom: 12 }}>Distribution</div><ResponsiveContainer width="100%" height={220}><PieChart><Pie data={[{ name: 'Critical', value: counts.Critical }, { name: 'High', value: counts.High }, { name: 'Medium', value: counts.Medium }, { name: 'Low', value: counts.Low }]} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, value }) => name + ': ' + value}>{['#ef4444', '#f97316', '#eab308', '#3b82f6'].map((c, i) => <Cell key={i} fill={c} />)}</Pie><Tooltip /></PieChart></ResponsiveContainer></Card>
-      </div>}
-      {tab === 'history' && <Card><DataTable cols={[
-        { key: 'id', label: 'ID' }, { key: 'device', label: 'Device' }, { key: 'message', label: 'Message' },
-        { key: 'severity', label: 'Severity', render: v => <span style={styles(dark).badge(styles(dark).severityColor[v])}>{v}</span> },
-        { key: 'time', label: 'Time' }, { key: 'status', label: 'Status', render: v => <span style={styles(dark).badge(v === 'Active' ? '#ef4444' : '#10b981')}>{v}</span> }
-      ]} rows={ALERTS} /></Card>}
+      </Tabs.Panel>
+      <Tabs.Panel value="history" pt="md">
+        <Card><DataTable cols={[
+          { key: 'id', label: 'ID' }, { key: 'device', label: 'Device' }, { key: 'message', label: 'Message' },
+          { key: 'severity', label: 'Severity', render: v => <span style={styles(dark).badge(styles(dark).severityColor[v])}>{v}</span> },
+          { key: 'time', label: 'Time' }, { key: 'status', label: 'Status', render: v => <span style={styles(dark).badge(v === 'Active' ? '#ef4444' : '#10b981')}>{v}</span> }
+        ]} rows={ALERTS} /></Card>
+      </Tabs.Panel>
+      <Tabs.Panel value="analytics" pt="md">
+        <div style={st.grid(2)}>
+          <Card><div style={{ fontWeight: 600, marginBottom: 12 }}>Alert Frequency</div><ResponsiveContainer width="100%" height={220}><BarChart data={alertFreqData}><CartesianGrid strokeDasharray="3 3" stroke={dark ? '#ffffff0a' : '#f0f0f0'} /><XAxis dataKey="day" tick={{ fontSize: 10, fill: '#64748b' }} /><YAxis tick={{ fontSize: 10, fill: '#64748b' }} /><Tooltip contentStyle={{ background: dark ? '#1e2535' : '#fff', border: 'none', borderRadius: 8, fontSize: 11 }} /><Bar dataKey="Critical" fill="#ef4444" stackId="a" /><Bar dataKey="High" fill="#f97316" stackId="a" /><Bar dataKey="Medium" fill="#eab308" stackId="a" /><Bar dataKey="Low" fill="#3b82f6" stackId="a" radius={[4, 4, 0, 0]} /><Legend /></BarChart></ResponsiveContainer></Card>
+          <Card><div style={{ fontWeight: 600, marginBottom: 12 }}>Distribution</div><ResponsiveContainer width="100%" height={220}><PieChart><Pie data={[{ name: 'Critical', value: counts.Critical }, { name: 'High', value: counts.High }, { name: 'Medium', value: counts.Medium }, { name: 'Low', value: counts.Low }]} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, value }) => name + ': ' + value}>{['#ef4444', '#f97316', '#eab308', '#3b82f6'].map((c, i) => <Cell key={i} fill={c} />)}</Pie><Tooltip /></PieChart></ResponsiveContainer></Card>
+        </div>
+      </Tabs.Panel>
+       </Tabs>
     </div>
   );
 }

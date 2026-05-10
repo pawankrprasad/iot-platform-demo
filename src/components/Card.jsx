@@ -1,6 +1,5 @@
-import { useTheme, styles } from '../context/ThemeContext';
+import { Paper } from '@mantine/core';
 
 export function Card({ children, style }) {
-  const { dark } = useTheme();
-  return <div style={{ ...styles(dark).card, ...style }}>{children}</div>;
+  return <Paper withBorder radius="md" p="md" mb="md" style={style}>{children}</Paper>;
 }
