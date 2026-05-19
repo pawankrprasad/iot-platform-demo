@@ -26,5 +26,5 @@ export const usersApi = {
     apiClient.patch(`${BASE}/${id}/role`, { roleId }).then((r) => r.data),
 
   getProfile: () =>
-    apiClient.get('/me').then((r) => r.data),
+    apiClient.get(`${BASE}/me`).then((r) => r.data),
 };

@@ -1,5 +1,8 @@
-import { useTheme, styles } from '../context/ThemeContext';
-import { Card, Btn, DataTable, PageHeader } from '../components';
+import { Card, PageHeader } from '../components';
+import { DataTable } from 'mantine-datatable';
+import { Paper, ActionIcon } from '@mantine/core';
+import { FiEye } from 'react-icons/fi';
+import { Badge } from '@components';
 
 const sampleLocations = [
   { id: 1, name: 'New York Headquarters', address: '123 Main St, New York, NY 10001', deviceCount: 145, status: 'Active' },
@@ -14,45 +17,50 @@ const sampleLocations = [
 ];
 
 export default function LocationManagement() {
-  const { dark } = useTheme();
-  
   const handleViewLocation = (location) => {
     alert(`Viewing details for: ${location.name}`);
   };
-  
+
   return (
     <div>
-      <PageHeader 
-        title="Location Management" 
-        sub="Manage locations and monitor device deployments" 
+      <PageHeader
+        title="Location Management"
+        sub="Manage locations and monitor device deployments"
         crumbs={['Home', 'Location Management']}
       />
-      <Card>
-        <DataTable 
-          cols={[
-            { key: 'name', label: 'Location Name' },
-            { key: 'address', label: 'Address' },
-            { 
-              key: 'deviceCount', 
-              label: 'Device Count', 
-              render: (v) => <span style={styles(dark).badge('#3b82f6')}>{v}</span> 
+      <Card withBorder radius="md">
+        <DataTable
+          columns={[
+            { accessor: 'name', title: 'Location Name' },
+            { accessor: 'address', title: 'Address' },
+            {
+              accessor: 'deviceCount',
+              title: 'Device Count',
+              render: ({ deviceCount }) => (
+                <Badge label={deviceCount} color="dark.4" variant="light" />
+              ),
             },
-            { 
-              key: 'status', 
-              label: 'Status', 
-              render: (v) => <span style={styles(dark).badge(v === 'Active' ? '#10b981' : '#64748b')}>{v}</span> 
+            {
+              accessor: 'status',
+              title: 'Status',
+              render: ({ status }) => (
+                <Badge label={status} />
+              ),
             },
-            { 
-              key: 'id', 
-              label: 'Actions', 
-              render: (_, row) => (
-                <div style={{ display: 'flex', gap: 6 }}>
-                  <Btn variant="ghost" onClick={() => handleViewLocation(row)}>View</Btn>
-                </div>
-              ) 
-            }
-          ]} 
-          rows={sampleLocations} 
+            {
+              accessor: 'id',
+              title: 'Actions',
+              width: 80,
+              render: (row) => (
+                <ActionIcon variant="subtle" color="gray" onClick={() => handleViewLocation(row)}>
+                  <FiEye size={15} />
+                </ActionIcon>
+              ),
+            },
+          ]}
+          records={sampleLocations}
+          withTableBorder={false}
+          verticalSpacing="xs"
         />
       </Card>
     </div>

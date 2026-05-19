@@ -5,12 +5,12 @@ export function StatCard({ label, value, color, icon, onClick, sub }) {
     <Paper
       withBorder
       radius="md"
-      h={100}
+      h={114}
       p="md"
       mb="md"
       onClick={onClick}
       className="stat-card"
-      style={{ borderTop: `3px solid ${color}`, cursor: onClick ? 'pointer' : 'default' }}
+      style={{borderTop: `3px solid ${color}`, cursor: onClick ? 'pointer' : 'default' }}
     >
       <Group justify="space-between" align="flex-start">
         <Stack gap={4}>

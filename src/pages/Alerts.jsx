@@ -8,10 +8,12 @@ import { AiFillAlert, AiTwotoneAlert, } from "react-icons/ai";
 import { RiAlertFill } from "react-icons/ri";
 import { LuTriangleAlert } from "react-icons/lu";
 
-import { Tabs } from '@mantine/core';
+import { Tabs, useMantineTheme, Paper, Grid, Group, Stack, Text, Badge, Button, Timeline } from '@mantine/core';
 
 export default function AlertsAnalytics({ nav }) {
   const { dark } = useTheme(); const st = styles(dark);
+  const theme = useMantineTheme();
+  const c = theme.other.colors;
   const [filter, setFilter] = useState('All');
   const [tab, setTab] = useState('overview');
   const sevs = ['All', 'Critical', 'High', 'Medium', 'Low'];
@@ -30,10 +32,10 @@ export default function AlertsAnalytics({ nav }) {
 
         <Tabs.Panel value="overview" pt="md">
         <div style={st.grid(4)}>
-          <StatCard label="Critical" value={counts.Critical} color="#ef4444" icon={<AiFillAlert color='#ef4444' />} onClick={() => setFilter('Critical')} />
-          <StatCard label="High" value={counts.High} color="#f97316" icon={<AiTwotoneAlert color='#f97316' />} onClick={() => setFilter('High')} />
-          <StatCard label="Medium" value={counts.Medium} color="#eab308" icon={<RiAlertFill color='#eab308' />} onClick={() => setFilter('Medium')} />
-          <StatCard label="Low" value={counts.Low} color="#3b82f6" icon={<LuTriangleAlert color='#3b82f6' />} onClick={() => setFilter('Low')} />
+          <StatCard label="Critical" value={counts.Critical} color={c.red} icon={<AiFillAlert color={c.red} />} onClick={() => setFilter('Critical')} />
+          <StatCard label="High" value={counts.High} color={c.orange} icon={<AiTwotoneAlert color={c.orange} />} onClick={() => setFilter('High')} />
+          <StatCard label="Medium" value={counts.Medium} color={c.yellow} icon={<RiAlertFill color={c.yellow} />} onClick={() => setFilter('Medium')} />
+          <StatCard label="Low" value={counts.Low} color={c.blue} icon={<LuTriangleAlert color={c.blue} />} onClick={() => setFilter('Low')} />
         </div>
         <Card>
           <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
@@ -43,7 +45,7 @@ export default function AlertsAnalytics({ nav }) {
             { key: 'id', label: 'Alert ID' }, { key: 'device', label: 'Device' },
             { key: 'severity', label: 'Severity', render: v => <span style={styles(dark).badge(styles(dark).severityColor[v])}>{v}</span> },
             { key: 'message', label: 'Message' }, { key: 'time', label: 'Time' },
-            { key: 'status', label: 'Status', render: v => <span style={styles(dark).badge(v === 'Active' ? '#ef4444' : '#10b981')}>{v}</span> }
+            { key: 'status', label: 'Status', render: v => <span style={styles(dark).badge(v === 'Active' ? c.red : c.emerald)}>{v}</span> }
           ]} rows={filtered} onRow={() => nav('alert-detail')} />
         </Card>
       </Tabs.Panel>
@@ -51,13 +53,13 @@ export default function AlertsAnalytics({ nav }) {
         <Card><DataTable cols={[
           { key: 'id', label: 'ID' }, { key: 'device', label: 'Device' }, { key: 'message', label: 'Message' },
           { key: 'severity', label: 'Severity', render: v => <span style={styles(dark).badge(styles(dark).severityColor[v])}>{v}</span> },
-          { key: 'time', label: 'Time' }, { key: 'status', label: 'Status', render: v => <span style={styles(dark).badge(v === 'Active' ? '#ef4444' : '#10b981')}>{v}</span> }
+          { key: 'time', label: 'Time' }, { key: 'status', label: 'Status', render: v => <span style={styles(dark).badge(v === 'Active' ? c.red : c.emerald)}>{v}</span> }
         ]} rows={ALERTS} /></Card>
       </Tabs.Panel>
       <Tabs.Panel value="analytics" pt="md">
         <div style={st.grid(2)}>
-          <Card><div style={{ fontWeight: 600, marginBottom: 12 }}>Alert Frequency</div><ResponsiveContainer width="100%" height={220}><BarChart data={alertFreqData}><CartesianGrid strokeDasharray="3 3" stroke={dark ? '#ffffff0a' : '#f0f0f0'} /><XAxis dataKey="day" tick={{ fontSize: 10, fill: '#64748b' }} /><YAxis tick={{ fontSize: 10, fill: '#64748b' }} /><Tooltip contentStyle={{ background: dark ? '#1e2535' : '#fff', border: 'none', borderRadius: 8, fontSize: 11 }} /><Bar dataKey="Critical" fill="#ef4444" stackId="a" /><Bar dataKey="High" fill="#f97316" stackId="a" /><Bar dataKey="Medium" fill="#eab308" stackId="a" /><Bar dataKey="Low" fill="#3b82f6" stackId="a" radius={[4, 4, 0, 0]} /><Legend /></BarChart></ResponsiveContainer></Card>
-          <Card><div style={{ fontWeight: 600, marginBottom: 12 }}>Distribution</div><ResponsiveContainer width="100%" height={220}><PieChart><Pie data={[{ name: 'Critical', value: counts.Critical }, { name: 'High', value: counts.High }, { name: 'Medium', value: counts.Medium }, { name: 'Low', value: counts.Low }]} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, value }) => name + ': ' + value}>{['#ef4444', '#f97316', '#eab308', '#3b82f6'].map((c, i) => <Cell key={i} fill={c} />)}</Pie><Tooltip /></PieChart></ResponsiveContainer></Card>
+          <Card><div style={{ fontWeight: 600, marginBottom: 12 }}>Alert Frequency</div><ResponsiveContainer width="100%" height={220}><BarChart data={alertFreqData}><CartesianGrid strokeDasharray="3 3" stroke={dark ? '#ffffff0a' : '#f0f0f0'} /><XAxis dataKey="day" tick={{ fontSize: 10, fill: '#64748b' }} /><YAxis tick={{ fontSize: 10, fill: '#64748b' }} /><Tooltip contentStyle={{ background: dark ? '#1e2535' : '#fff', border: 'none', borderRadius: 8, fontSize: 11 }} /><Bar dataKey="Critical" fill={c.red} stackId="a" /><Bar dataKey="High" fill={c.orange} stackId="a" /><Bar dataKey="Medium" fill={c.yellow} stackId="a" /><Bar dataKey="Low" fill={c.blue} stackId="a" radius={[4, 4, 0, 0]} /><Legend /></BarChart></ResponsiveContainer></Card>
+          <Card><div style={{ fontWeight: 600, marginBottom: 12 }}>Distribution</div><ResponsiveContainer width="100%" height={220}><PieChart><Pie data={[{ name: 'Critical', value: counts.Critical }, { name: 'High', value: counts.High }, { name: 'Medium', value: counts.Medium }, { name: 'Low', value: counts.Low }]} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, value }) => name + ': ' + value}>{[c.red, c.orange, c.yellow, c.blue].map((col, i) => <Cell key={i} fill={col} />)}</Pie><Tooltip /></PieChart></ResponsiveContainer></Card>
         </div>
       </Tabs.Panel>
        </Tabs>
@@ -65,16 +67,72 @@ export default function AlertsAnalytics({ nav }) {
   );
 }
 export function AlertDetail({ nav }) {
-  const { dark } = useTheme(); const st = styles(dark);
+  const theme = useMantineTheme();
+  const c = theme.other.colors;
   const a = ALERTS[0];
+
+  const severityColor = {
+    Critical: 'red', High: 'orange', Medium: 'yellow', Low: 'blue',
+  };
+
+  const DETAILS = [
+    ['ID', a.id], ['Device', a.device], ['Severity', a.severity],
+    ['Message', a.message], ['Status', a.status], ['Time', a.time],
+  ];
+
+  const TIMELINE = [
+    { title: 'Alert triggered',  color: 'red',    time: '2h ago' },
+    { title: 'Acknowledged',     color: 'orange', time: '1h 45m ago' },
+    { title: 'Investigation',    color: 'blue',   time: '1h 30m ago' },
+    { title: 'Resolved',         color: 'green',  time: '1h ago' },
+  ];
+
   return (
     <div>
-      <PageHeader title={'Alert: ' + a.id} sub={a.message} crumbs={['Home', 'Alerts', a.id]}
-        actions={[<Btn key="r" variant="success">Resolve</Btn>, <Btn key="b" variant="ghost" onClick={() => nav('alerts')}>Back</Btn>]} />
-      <div style={st.grid(2)}>
-        <Card><div style={{ fontWeight: 600, marginBottom: 12 }}>Details</div>{[['ID', a.id], ['Device', a.device], ['Severity', a.severity], ['Message', a.message], ['Status', a.status], ['Time', a.time]].map(([k, v]) => <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '1px solid ' + (dark ? '#ffffff06' : '#f8fafc'), fontSize: 12.5 }}><span style={{ color: '#64748b' }}>{k}</span>{k === 'Severity' ? <span style={styles(dark).badge(styles(dark).severityColor[v])}>{v}</span> : k === 'Status' ? <span style={styles(dark).badge(v === 'Active' ? '#ef4444' : '#10b981')}>{v}</span> : <strong>{v}</strong>}</div>)}</Card>
-        <Card><div style={{ fontWeight: 600, marginBottom: 12 }}>Timeline</div>{[{ icon: '🔴', msg: 'Alert triggered', time: '2h ago' }, { icon: '👁️', msg: 'Acknowledged', time: '1h 45m ago' }, { icon: '🔍', msg: 'Investigation', time: '1h 30m ago' }].map((e, i) => <div key={i} style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: i < 2 ? '1px solid ' + (dark ? '#ffffff08' : '#f1f5f9') : undefined, fontSize: 12 }}><span>{e.icon}</span><div style={{ flex: 1 }}>{e.msg}</div><div style={{ color: '#64748b', fontSize: 11 }}>{e.time}</div></div>)}</Card>
-      </div>
+      <PageHeader
+        title={'Alert: ' + a.id}
+        sub={a.message}
+        crumbs={['Home', 'Alerts', a.id]}
+        actions={[
+          <Button key="r" size="xs">Resolve</Button>,
+          <Button key="b" size="xs" variant='default' onClick={() => nav('alerts')}>Back</Button>,
+        ]}
+      />
+      <Grid align="stretch">
+        <Grid.Col span={6}>
+           <Paper withBorder p="md" radius="md" h="100%">
+            <Text fw={600} mb="sm">Details</Text>
+            <Stack gap={0}>
+              {DETAILS.map(([k, v], i) => (
+                <Group
+                  key={k}
+                  justify="space-between"
+                  py="xs"
+                  style={{ borderBottom: i < DETAILS.length - 1 ? '1px solid var(--mantine-color-dark-5)' : 'none' }}
+                >
+                  <Text size="xs" c="dimmed">{k}</Text>
+                  {k === 'Severity'
+                    ? <Badge color={severityColor[v]} variant="light" size="sm">{v}</Badge>
+                    : k === 'Status'
+                      ? <Badge color={v === 'Active' ? 'red' : 'teal'} variant="light" size="sm">{v}</Badge>
+                      : <Text size="xs" fw={600}>{v}</Text>}
+                </Group>
+              ))}
+            </Stack>
+          </Paper>
+        </Grid.Col>
+        <Grid.Col span={6}>
+          <Paper withBorder p="md" radius="md" h="100%">
+            <Timeline active={TIMELINE.length - 1} bulletSize={20} lineWidth={2}>
+              {TIMELINE.map((e) => (
+                <Timeline.Item key={e.title} title={e.title} color={e.color}>
+                  <Text size="xs" c="dimmed">{e.time}</Text>
+                </Timeline.Item>
+              ))}
+            </Timeline>
+          </Paper>
+        </Grid.Col>
+      </Grid>
     </div>
   );
 }

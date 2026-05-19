@@ -1,13 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
 
 
-.orbitron-logo-text {
-  font-family: "Orbitron", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 900;
-  font-style: normal;
-}
-
 * {
   margin: 0;
   padding: 0;
@@ -27,11 +20,24 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
-  background-color: #ffffff;
-  color: #333333;
-  line-height: 1.6;
+
+.main-app { 
+  display: flex;
+  height: 100vh;
+  background: var(--mantine-color-dark-9);
+  color: var(--mantine-color-gray-1);
+
 }
+
+.main-header { 
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+ .main-content { flex: 1; overflow-y: auto; padding: 20px; }
+
 
 /* Global Scrollbar Styles */
 ::-webkit-scrollbar {
@@ -60,78 +66,6 @@ body {
   scrollbar-color: rgba(100, 100, 100, 0.5) rgba(0, 0, 0, 0.1);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button {
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-input,
-textarea,
-select {
-  font-family: inherit;
-}
-
-
-/* ###################### */
-
-
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f1f5f9;
-}
-
-/* canvas */
-.canvas {
-  position: relative;
-  width: 2000px;
-  height: 1000px;
-}
-
-/* svg edges */
-.edges {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-/* node wrapper */
-.node {
-  position: absolute;
-  transition: transform 0.3s ease;
-}
-
-/* card */
-.card {
-  width: 160px;
-  height: 60px;
-  background: #fff;
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
-}
-
-/* toggle button */
-.toggle {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: none;
-  background: #e2e8f0;
-  cursor: pointer;
-}
 
 // ========== New STYLE ADDED AND IN use
 .stat-card {

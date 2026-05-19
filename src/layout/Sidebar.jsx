@@ -1,68 +1,101 @@
-import { useTheme, styles } from '../context/ThemeContext';
+import { Box, Stack, Text, NavLink, Divider } from '@mantine/core';
+import {
+  MdDashboard, MdWifi, MdStorage, MdNotifications,
+  MdFolder, MdDescription, MdPeople, MdBusiness,
+  MdLabel, MdLocationOn,
+} from 'react-icons/md';
+import { customColors as c } from '../lib/themeColors';
 
 const NAV = [
-  { section: 'Overview', items: [{ id: 'dashboard', label: 'Dashboard', icon: 'grid', path: '/' }] },
+  {
+    section: 'Overview',
+    items: [
+      { id: 'dashboard', label: 'Dashboard', icon: MdDashboard, color: c.blue, path: '/' },
+    ],
+  },
   {
     section: 'Operations',
     items: [
-      { id: 'connectivity', label: 'Connectivity', icon: 'wifi', path: '/connectivity' },
-      { id: 'assets', label: 'Asset Management', icon: 'server', path: '/assets' },
-      { id: 'alerts', label: 'Alerts & Analytics', icon: 'bell', path: '/alerts' },
+      { id: 'connectivity',     label: 'Connectivity',       icon: MdWifi,          color: c.emerald, path: '/connectivity' },
+      { id: 'assets',           label: 'Asset Management',   icon: MdStorage,       color: c.indigo,  path: '/assets' },
+      { id: 'alerts',           label: 'Alerts & Analytics', icon: MdNotifications, color: c.red,     path: '/alerts' },
     ],
   },
   {
     section: 'Management',
     items: [
-      { id: 'files', label: 'File Management', icon: 'folder', path: '/files' },
-      { id: 'reports', label: 'Reports', icon: 'file', path: '/reports' },
-      { id: 'user-management', label: 'User Management', icon: 'users', path: '/user-management' },
-      { id: 'orgs', label: 'Organizations', icon: 'building', path: '/orgs' },
-      { id: 'brands', label: 'Brand Management', icon: 'tags', path: '/brands' },
-      { id: 'locations', label: 'Location Management', icon: 'location', path: '/locations' },
+      { id: 'files',            label: 'File Management',    icon: MdFolder,      color: c.orange,  path: '/files' },
+      { id: 'reports',          label: 'Reports',            icon: MdDescription, color: c.yellow,  path: '/reports' },
+      { id: 'user-management',  label: 'User Management',    icon: MdPeople,      color: c.violet,  path: '/user-management' },
+      { id: 'orgs',             label: 'Organizations',      icon: MdBusiness,    color: c.cyan,    path: '/orgs' },
+      { id: 'brands',           label: 'Brand Management',   icon: MdLabel,       color: c.magenta, path: '/brands' },
+      { id: 'locations',        label: 'Location Management',icon: MdLocationOn,  color: c.lime,    path: '/locations' },
     ],
   },
 ];
 
-const ICONS = {
-  grid: '&#9632;',
-  wifi: '&#128225;',
-  server: '&#128194;',
-  bell: '&#128276;',
-  folder: '&#128193;',
-  file: '&#128196;',
-  users: '&#128101;',
-  building: '&#127970;',
-  tags: '&#128233;',
-  location: '&#128205;',
-};
-
-export default function Sidebar({ nav, activeId, dark }) {
-  const st = styles(dark);
-
+export default function Sidebar({ nav, activeId }) {
   return (
-    <div style={st.sidebar}>
-      <div style={st.sidebarLogo}>
+    <Box
+      w={220}
+      h="100vh"
+      style={{
+        background: 'var(--mantine-color-body)',
+        borderRight: '1px solid var(--mantine-color-dark-8)',
+        display: 'flex',
+        flexDirection: 'column',
+        flexShrink: 0,
+        overflowY: 'auto',
+      }}
+    >
+      {/* Logo */}
+      <Box px="md" py="lg" style={{ borderBottom: '1px solid var(--mantine-color-dark-5)' }}>
+        <Box style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <img src="/assets/logo.png" alt="Logo" style={{ width: '20%', height: 'auto' }} />
+          <Box>
+            <Text
+              fw={900}
+              size="sm"
+              style={{ fontFamily: "'Orbitron', sans-serif", letterSpacing: 1 }}
+            >
+              SMATRYX
+            </Text>
+            <Text size="xs" c="dimmed" lh={1.2}>IoT Platform</Text>
+          </Box>
+        </Box>
+      </Box>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <img src="/assets/logo.png" alt="Logo" style={{ width: '20%', height: '20%' }} />
-          <div>
-            <div style={st.orbitronLogoText}>SMATRYX</div>
-            <div style={st.logoSub}>IoT Platform</div>
-          </div>
-        </div>
-      </div>
-      {NAV.map((group) => (
-        <div key={group.section}>
-          <div style={st.navSection}>{group.section}</div>
-          {group.items.map((item) => (
-            <div key={item.id} style={st.navItem(activeId === item.id)} onClick={() => nav(item.path)}>
-              <span dangerouslySetInnerHTML={{ __html: ICONS[item.icon] || '•' }} />
-              <span>{item.label}</span>
-            </div>
-          ))}
-        </div>
-      ))}
-
-    </div>
+      {/* Nav groups */}
+      <Stack gap={0} pt="xs" style={{ flex: 1 }}>
+        {NAV.map((group, gi) => (
+          <Box key={group.section}>
+            {gi > 0 && <Divider my={4} />}
+            <Text
+              size="xs"
+              fw={600}
+              tt="uppercase"
+              c="dimmed"
+              px="md"
+              py={6}
+              style={{ letterSpacing: 1 }}
+            >
+              {group.section}
+            </Text>
+            {group.items.map((item) => (
+              <NavLink
+                key={item.id}
+                label={item.label}
+                leftSection={<item.icon size={16} color={item.color} />}
+                active={activeId === item.id}
+                onClick={() => nav(item.path)}
+                styles={{
+                  root: {borderRadius: 5, margin: '1px 6px', width: 'calc(100% - 12px)' },
+                }}
+              />
+            ))}
+          </Box>
+        ))}
+      </Stack>
+    </Box>
   );
 }

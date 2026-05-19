@@ -3,9 +3,12 @@ import { useTheme, styles } from '../context/ThemeContext';
 import { StatCard, Card, Btn, DataTable, PageHeader, SearchBar } from '../components';
 import { DEVICES, connTrendData } from '../mock-data';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { useMantineTheme } from '@mantine/core';
 
 export function ConnectivityOverview({ nav }) {
   const { dark } = useTheme(); const st = styles(dark);
+  const theme = useMantineTheme();
+  const c = theme.other.colors;
   const online = DEVICES.filter(d => d.status === 'Online').length;
   const offline = DEVICES.filter(d => d.status === 'Offline').length;
   const warning = DEVICES.filter(d => d.status === 'Warning').length;
@@ -13,20 +16,20 @@ export function ConnectivityOverview({ nav }) {
     <div>
       <PageHeader title="Connectivity Management" sub="Monitor device connection status" crumbs={['Home', 'Connectivity']} />
       <div style={st.grid(3)}>
-        <StatCard label="Online" value={online} color="#10b981" icon="🟢" onClick={() => nav('connectivity-online')} sub="Click to view" />
-        <StatCard label="Offline" value={offline} color="#ef4444" icon="🔴" onClick={() => nav('connectivity-offline')} sub="Click to view" />
-        <StatCard label="Warning" value={warning} color="#f97316" icon="🟡" sub="Degraded" />
+        <StatCard label="Online" value={online} color={c.emerald} icon="🟢" onClick={() => nav('connectivity-online')} sub="Click to view" />
+        <StatCard label="Offline" value={offline} color={c.red} icon="🔴" onClick={() => nav('connectivity-offline')} sub="Click to view" />
+        <StatCard label="Warning" value={warning} color={c.orange} icon="🟡" sub="Degraded" />
       </div>
       <div style={st.grid(2)}>
         <Card>
           <div style={{ fontWeight: 600, marginBottom: 12, fontSize: 13 }}>Connection Trends (7d)</div>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={connTrendData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={dark ? '#ffffff0a' : '#f0f0f0'} />
-              <XAxis dataKey="day" tick={{ fontSize: 10, fill: '#64748b' }} /><YAxis tick={{ fontSize: 10, fill: '#64748b' }} />
-              <Tooltip contentStyle={{ background: dark ? '#1e2535' : '#fff', border: 'none', borderRadius: 8, fontSize: 11 }} />
-              <Line type="monotone" dataKey="online" stroke="#10b981" strokeWidth={2} dot={false} name="Online" />
-              <Line type="monotone" dataKey="offline" stroke="#ef4444" strokeWidth={2} dot={false} name="Offline" />
+              <CartesianGrid strokeDasharray="3 3" stroke={theme.colors.dark[5]} />
+              <XAxis dataKey="day" tick={{ fontSize: 10, fill: theme.colors.dark[2] }} /><YAxis tick={{ fontSize: 10, fill: theme.colors.dark[2] }} />
+              <Tooltip contentStyle={{ background: theme.colors.dark[8], border: 'none', borderRadius: 8, fontSize: 11 }} />
+              <Line type="monotone" dataKey="online" stroke={c.emerald} strokeWidth={2} dot={false} name="Online" />
+              <Line type="monotone" dataKey="offline" stroke={c.red} strokeWidth={2} dot={false} name="Offline" />
               <Legend />
             </LineChart>
           </ResponsiveContainer>

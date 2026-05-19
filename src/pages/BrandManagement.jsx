@@ -1,42 +1,55 @@
-import { useTheme, styles } from '../context/ThemeContext';
-import { Card, Btn, DataTable, PageHeader } from '../components';
+import { Card, PageHeader , Badge} from '@components';
+import { DataTable } from 'mantine-datatable';
+import { Paper, ActionIcon, Text } from '@mantine/core';
+import { FiEdit2 } from 'react-icons/fi';
 
 const sampleBrands = [
   { id: 1, logo: '🏢', name: 'Brand A', totalDevices: 120, description: 'Leading IoT solutions provider' },
-  { id: 2, logo: '🔧', name: 'Brand B', totalDevices: 80, description: 'Industrial automation experts' },
+  { id: 2, logo: '🔧', name: 'Brand B', totalDevices: 80,  description: 'Industrial automation experts' },
   { id: 3, logo: '⚡', name: 'Brand C', totalDevices: 200, description: 'Smart energy management' },
-  { id: 4, logo: '🌐', name: 'Brand D', totalDevices: 50, description: 'Connected device specialists' },
+  { id: 4, logo: '🌐', name: 'Brand D', totalDevices: 50,  description: 'Connected device specialists' },
 ];
 
 export default function BrandManagement() {
-  const { dark } = useTheme();
-  
   return (
     <div>
-      <PageHeader 
-        title="Brand Management" 
-        sub="Manage brands and their device integrations" 
+      <PageHeader
+        title="Brand Management"
+        sub="Manage brands and their device integrations"
         crumbs={['Home', 'Brand Management']}
       />
       <Card>
-        <DataTable 
-          cols={[
-            { key: 'logo', label: 'Logo', render: (v) => <span style={{ fontSize: 24 }}>{v}</span> },
-            { key: 'name', label: 'Brand Name' },
-            { key: 'totalDevices', label: 'Total Devices', render: (v) => <span style={styles(dark).badge('#3b82f6')}>{v}</span> },
-            { key: 'description', label: 'Description' },
-            { 
-              key: 'id', 
-              label: 'Actions', 
+        <DataTable
+          columns={[
+            {
+              accessor: 'logo',
+              title: 'Logo',
+              width: 70,
+              render: ({ logo }) => <Text fz={16}>{logo}</Text>,
+            },
+            { accessor: 'name', title: 'Brand Name' },
+            {
+              accessor: 'totalDevices',
+              title: 'Total Devices',
+              render: ({ totalDevices }) => (
+                <Badge label={totalDevices} color="dark" variant="light" />
+              ),
+            },
+            { accessor: 'description', title: 'Description' },
+            {
+              accessor: 'id',
+              title: 'Actions',
+              width: 80,
               render: () => (
-                <div style={{ display: 'flex', gap: 6 }}>
-                  <Btn variant="ghost">Edit</Btn>
-                  
-                </div>
-              ) 
-            }
-          ]} 
-          rows={sampleBrands} 
+                <ActionIcon variant="subtle" color="gray">
+                  <FiEdit2 size={15} />
+                </ActionIcon>
+              ),
+            },
+          ]}
+          records={sampleBrands}
+          withTableBorder={false}
+          
         />
       </Card>
     </div>

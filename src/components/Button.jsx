@@ -32,3 +32,16 @@ export function Button({
 };
 
 
+export function ButtonGradient({ children, ...props }) {
+	return (
+		<Button
+			variant="gradient"
+			gradient={{ from: '#3b82f6', to: '#6366f1', deg: 135 }}
+			radius="md"
+			{...props}
+		>
+			{children}
+		</Button>
+	)
+}
+
