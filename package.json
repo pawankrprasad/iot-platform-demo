@@ -41,6 +41,7 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.4",
     "@vitejs/plugin-react": "^4.5.0",
+    "globals": "^17.6.0",
     "postcss": "^8.5.14",
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
@@ -51,6 +52,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "lint": "eslint \"src/**/*.{js,jsx}\"",
+    "lint:fix": "eslint \"src/**/*.{js,jsx}\" --fix",
     "test": "echo \"No tests configured. Run a test runner manually.\" && exit 0"
   },
   "browserslist": {

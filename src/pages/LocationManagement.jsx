@@ -1,6 +1,6 @@
 import { Card, PageHeader } from '../components';
 import { DataTable } from 'mantine-datatable';
-import { Paper, ActionIcon } from '@mantine/core';
+import { ActionIcon } from '@mantine/core';
 import { FiEye } from 'react-icons/fi';
 import { Badge } from '@components';
 

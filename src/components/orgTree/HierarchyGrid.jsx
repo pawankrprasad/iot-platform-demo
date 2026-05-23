@@ -166,7 +166,7 @@ export default function HierarchyGrid({ data = null, onSelectedNodeChange = null
             lastChildInColumn,
             isAfterCountNode
         };
-    }, [COLUMNS, expandedNodes, isLastChild]);
+    }, [expandedNodes, isLastChild]);
 
     return (
         <div className="grid-wrapper">

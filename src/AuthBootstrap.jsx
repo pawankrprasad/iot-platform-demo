@@ -1,21 +1,11 @@
-import { useState, lazy, Suspense, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTheme, styles } from './context/ThemeContext';
-import Sidebar from './layout/Sidebar';
-import Login from '@features/account/pages/Login';
-import ForgotPassword from '@features/account/pages/ForgotPassword';
-import AccountLayout from './layout/AccountLayout';
 import {
   bootstrapSuccess,
   bootstrapFailed,
   setBootstrapped,
-  logoutAction,
-  selectIsAuthenticated,
   selectIsBootstrapped,
 } from './store';
-import { Box, Text, Group, Menu, Avatar, Divider, Paper } from '@mantine/core';
-import { BodyWrapper, AppLoader } from '@components';
 
 
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTheme, styles } from '../context/ThemeContext';
-import { StatCard, Card, Btn, DataTable, PageHeader, Stepper } from '../components';
-import { REPORTS, DEVICES } from '../mock-data';
+import { Card, Btn, PageHeader, Stepper } from '../components';
+import { DEVICES } from '../mock-data';
 
 
 export function GenerateReport({ nav }) {

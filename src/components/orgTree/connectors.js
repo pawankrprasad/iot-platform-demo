@@ -1,4 +1,3 @@
-import { NODE_WIDTH, NODE_HEIGHT } from "./layout";
 
 export function getLinks(root) {
     const links = [];

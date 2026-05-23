@@ -1,7 +1,6 @@
-import { useState } from 'react';
 import { useTheme, styles } from '../context/ThemeContext';
-import { StatCard, Card, Btn, DataTable, PageHeader, Stepper } from '../components';
-import { REPORTS, DEVICES } from '../mock-data';
+import { StatCard, Card, Btn, DataTable, PageHeader } from '../components';
+import { REPORTS } from '../mock-data';
 
 export function Reports({ nav }) {
     const { dark } = useTheme(); const st = styles(dark);

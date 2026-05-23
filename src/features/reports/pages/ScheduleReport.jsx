@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import { useTheme, styles } from '../context/ThemeContext';
-import { StatCard, Card, Btn, DataTable, PageHeader, Stepper } from '../components';
-import { REPORTS, DEVICES } from '../mock-data';
+import { Card, Btn, DataTable, PageHeader } from '../components';
 
 
 export function ScheduledReports({ nav }) {

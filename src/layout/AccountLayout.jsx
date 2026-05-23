@@ -1,6 +1,5 @@
 import { Outlet } from 'react-router-dom';
 import { Logo } from '../components';
-import { useTheme } from '../context/ThemeContext';
 import { Box, Stack, Text, Paper } from '@mantine/core';
 
 

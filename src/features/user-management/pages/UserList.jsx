@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import { Card, Btn, Badge, PageHeader, Button } from '@components';
-import { Stepper, Tabs, Grid, TextInput, Textarea, Select, Text, Badge as MantineBadge, Group } from '@mantine/core';
+import { Card, Badge, Button } from '@components';
 import { DataTable } from 'mantine-datatable';
 import { USERS } from '../../../mock-data';
-import RoleList from './RoleList';
 
 
 const UserList = () => {

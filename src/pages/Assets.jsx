@@ -7,7 +7,6 @@ import { exportCSV } from '../utils/exportCSV';
 
 
 import { FaCalculator } from "react-icons/fa";
-import { RiWifiOffLine, RiAlertFill } from "react-icons/ri";
 import { AiFillAlert, AiFillProduct } from "react-icons/ai";
 
 

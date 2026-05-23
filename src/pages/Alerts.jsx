@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTheme, styles } from '../context/ThemeContext';
-import { StatCard, Card, Btn, DataTable, PageHeader } from '../components';
+import { StatCard, Card, DataTable, PageHeader } from '../components';
 import { ALERTS, alertFreqData } from '../mock-data';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 

@@ -1,6 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useTheme, styles } from '@context/ThemeContext';
-import { Card, PageHeader, Button } from '@components';
+import { PageHeader, Button } from '@components';
 import { Tabs } from '@mantine/core';
 import UserList from './UserList';
 import RoleList from './RoleList';

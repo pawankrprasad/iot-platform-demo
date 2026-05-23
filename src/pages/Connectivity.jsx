@@ -27,7 +27,7 @@ export function ConnectivityOverview({ nav }) {
             <LineChart data={connTrendData}>
               <CartesianGrid strokeDasharray="3 3" stroke={theme.colors.dark[5]} />
               <XAxis dataKey="day" tick={{ fontSize: 10, fill: theme.colors.dark[2] }} /><YAxis tick={{ fontSize: 10, fill: theme.colors.dark[2] }} />
-              <Tooltip contentStyle={{ background: theme.colors.dark[8], border: 'none', borderRadius: 8, fontSize: 11 }} />
+              <Tooltip contentStyle={{ background: theme.colors.dark[7], border: 'none', borderRadius: 8, fontSize: 11 }} />
               <Line type="monotone" dataKey="online" stroke={c.emerald} strokeWidth={2} dot={false} name="Online" />
               <Line type="monotone" dataKey="offline" stroke={c.red} strokeWidth={2} dot={false} name="Offline" />
               <Legend />

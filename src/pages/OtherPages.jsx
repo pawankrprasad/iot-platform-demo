@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTheme, styles } from '../context/ThemeContext';
-import { StatCard, Card, Btn, DataTable, PageHeader, SearchBar, Stepper } from '../components';
+import { StatCard, Card, Btn, DataTable, PageHeader, Stepper } from '../components';
 import { REPORTS, FILES, USERS, ORGS, DEVICES } from '../mock-data';
 
 export function Reports({ nav }) {
@@ -196,7 +196,7 @@ export function AddUser({ nav }) {
     </Card>
   </div>);
 }
-export function OrgManagement({ nav }) {
+export function OrgManagement() {
   const { dark } = useTheme(); const st = styles(dark);
   const [tab,setTab]=useState('orgs');
   return (<div>

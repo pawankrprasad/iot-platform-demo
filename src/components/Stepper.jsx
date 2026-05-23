@@ -1,4 +1,4 @@
-import { useTheme, styles } from '../context/ThemeContext';
+import { useTheme } from '../context/ThemeContext';
 
 export function Stepper({ steps, current }) {
   const { dark } = useTheme();

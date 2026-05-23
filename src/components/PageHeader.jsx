@@ -1,4 +1,4 @@
-import { Breadcrumbs, Anchor, Title, Text, Group, Stack } from '@mantine/core';
+import { Breadcrumbs, Title, Text, Group, Stack } from '@mantine/core';
 
 export function PageHeader({ title, sub, crumbs, actions }) {
   return (

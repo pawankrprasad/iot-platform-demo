@@ -1,6 +1,6 @@
 import { Card, PageHeader , Badge} from '@components';
 import { DataTable } from 'mantine-datatable';
-import { Paper, ActionIcon, Text } from '@mantine/core';
+import { ActionIcon, Text } from '@mantine/core';
 import { FiEdit2 } from 'react-icons/fi';
 
 const sampleBrands = [

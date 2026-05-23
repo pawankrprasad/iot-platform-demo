@@ -1,7 +1,7 @@
 
-import { StatCard, Card, SectionCard, Btn, PageHeader, Select, Button, IconButton, Badge } from '../../../components';
+import { StatCard, SectionCard, PageHeader, Select, Button, IconButton, Badge } from '../../../components';
 
-import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 import { FaLayerGroup, FaSatelliteDish, FaLocationArrow, FaUsers, FaWifi } from "react-icons/fa6";
 import { RiWifiOffLine, RiAlertFill } from "react-icons/ri";

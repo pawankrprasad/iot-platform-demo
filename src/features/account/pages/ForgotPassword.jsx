@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextInput, Button, Title, Text, Alert, Stack, Anchor } from '@mantine/core';
+import { TextInput, Title, Text, Alert, Stack, Anchor } from '@mantine/core';
 import { ButtonGradient } from '../../../components';
 
 export default function ForgotPassword() {
@@ -35,7 +35,7 @@ export default function ForgotPassword() {
             <>
                 <Title order={4} mb={4}>Check your inbox</Title>
                 <Text size="xs" c="dimmed" mb="lg">
-                    We've sent a password reset link to <strong>{email}</strong>.
+                    We have sent a password reset link to <strong>{email}</strong>.
                     Check your spam folder if you don't see it within a few minutes.
                 </Text>
                 <ButtonGradient

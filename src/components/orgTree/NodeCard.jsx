@@ -1,4 +1,3 @@
-import React from "react";
 
 export default function NodeCard({ node, onToggle }) {
     return (

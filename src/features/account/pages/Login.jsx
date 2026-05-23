@@ -5,15 +5,15 @@ import { authApi } from '../../../api';
 import { usersApi } from '../../../api/users.api';
 import { setTokens } from '../../../lib/axios';
 import { setLoading as setAuthLoading, loginSuccess, loginFailed } from '../../../store';
-import { TextInput, PasswordInput, Button, Title, Text, Alert, Stack, Anchor, Box } from '@mantine/core';
+import { TextInput, PasswordInput, Title, Text, Alert, Stack, Anchor, Box } from '@mantine/core';
 import { ButtonGradient } from '../../../components';
 
 export default function Login() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const [email, setEmail] = useState('pkprasad06@gmail.com');
-    const [password, setPassword] = useState('Welcome@123!');
+    const [email, setEmail] = useState('demo@smatryx.com');
+    const [password, setPassword] = useState('Demo@123!');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
